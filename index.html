@@ -109,7 +109,7 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 #stage .hud{position:absolute;inset:0;pointer-events:none;z-index:50}
 footer{position:relative;background:var(--ink);color:#fff;padding:calc(var(--u)*2.2) max(calc(var(--u)*4),16px);display:flex;flex-wrap:wrap;gap:1em;justify-content:space-between;font-size:max(calc(var(--u)*.85),9px);letter-spacing:.18em;text-transform:uppercase}
 footer b{color:var(--red)}
-/* now playing (Spotify via Discord presence): a plate under the gun girl that hides where she fades out */
+/* now playing (Spotify, with Discord presence as a stand-in): a plate under the gun girl that hides where she fades out */
 .np-wrap{--npw:clamp(272px,calc(var(--u)*32.5),640px);--art:clamp(46px,calc(var(--u)*4.6),80px);--pad:clamp(8px,calc(var(--u)*.8),15px);--lab:clamp(9px,calc(var(--u)*.62),11px);
   position:absolute;z-index:4;width:var(--npw);pointer-events:auto;will-change:transform;
   top:calc(var(--u)*170.48);left:min(calc(var(--u)*72.25 - var(--npw)/2), calc(var(--u)*50 + 50vw - 16px - var(--npw)))}
@@ -584,9 +584,11 @@ req();
 })();
 </script>
 <script>
-/* Now playing: Spotify activity read from Discord presence through Lanyard (https://github.com/Phineas/lanyard).
-   Needs: membership in discord.gg/lanyard, Spotify connected in Discord, the Discord user ID below. Empty ID = widget off. */
+/* Now playing. First choice is Spotify itself, through Pavel's Cloudflare Worker (spotify/worker.js); that works while his account has Premium.
+   Stand-in is the Spotify activity in his Discord presence, read through Lanyard (https://github.com/Phineas/lanyard); that needs Discord running.
+   Empty NOW_URL = Discord only. Empty DISCORD_ID = no stand-in. */
 (() => {
+  const NOW_URL = '';
   const DISCORD_ID = '1077196329031323809';
   const WS_URL = 'wss://api.lanyard.rest/socket', REST_URL = 'https://api.lanyard.rest/v1/users/';
   const $ = id => document.getElementById(id);
@@ -598,30 +600,30 @@ req();
 
   function tick() {
     if (!ts) return;
-    const len = ts.end - ts.start, cur = Math.min(len, Math.max(0, Date.now() - ts.start));
+    const len = ts.end - ts.start, cur = Math.min(len, Math.max(0, ts.frozen != null ? ts.frozen : Date.now() - ts.start));
     fill.style.width = (len > 0 ? cur / len * 100 : 0) + '%';
     elapsed.textContent = fmt(cur);
     total.textContent = fmt(len);
   }
 
-  // p: Lanyard presence, or null while nothing is known yet
-  function render(p) {
-    const s = p && p.listening_to_spotify && p.spotify;
+  // t: { label, live, song, artist, art, url, start, end, frozen }, or { idle: line under "Nothing playing" }, or null while nothing is known
+  function render(t) {
     clearInterval(timer); ts = null;
-    np.classList.toggle('playing', !!s);
-    if (s) {
-      state.textContent = 'Now playing';
-      song.textContent = s.song || 'Unknown track';
-      artist.textContent = (s.artist || '').replace(/;\s*/g, ', ');
-      img.hidden = !s.album_art_url;
-      if (s.album_art_url && img.getAttribute('src') !== s.album_art_url) img.src = s.album_art_url;
-      if (s.track_id) { song.href = 'https://open.spotify.com/track/' + s.track_id; song.setAttribute('aria-label', 'Now playing on Spotify: ' + song.textContent + ' by ' + artist.textContent); }
+    const has = !!(t && t.song);
+    np.classList.toggle('playing', has && !!t.live);
+    if (has) {
+      state.textContent = t.label;
+      song.textContent = t.song;
+      artist.textContent = t.artist || '';
+      img.hidden = !t.art;
+      if (t.art && img.getAttribute('src') !== t.art) img.src = t.art;
+      if (t.url) { song.href = t.url; song.setAttribute('aria-label', t.label + ' on Spotify: ' + t.song + (t.artist ? ' by ' + t.artist : '')); }
       else { song.removeAttribute('href'); song.removeAttribute('aria-label'); }
-      if (s.timestamps && s.timestamps.start && s.timestamps.end) { ts = s.timestamps; tick(); timer = setInterval(tick, 1000); }
+      if (t.end > t.start) { ts = t; tick(); if (t.live) timer = setInterval(tick, 1000); }
     } else {
       state.textContent = 'Spotify';
       song.textContent = 'Nothing playing';
-      artist.textContent = p && p.discord_status ? 'Discord: ' + (STATUS[p.discord_status] || 'offline') : '';
+      artist.textContent = (t && t.idle) || '';
       img.hidden = true;
       song.removeAttribute('href');
       song.removeAttribute('aria-label');
@@ -629,38 +631,85 @@ req();
     np.classList.toggle('has-time', !!ts);
   }
 
-  let stopped = false, live = false, retry = 2000;
+  /* ---------- Spotify through the Worker ---------- */
+  const fromSpotify = j => {
+    if (!j.song) return { idle: '' };
+    const t = { song: j.song, artist: j.artist, art: j.art, url: j.url }, now = Date.now();
+    if (j.playing) return { ...t, label: 'Now playing', live: true, start: now - j.progress, end: now - j.progress + j.duration };
+    if (j.paused) return { ...t, label: 'Paused', start: 0, end: j.duration, frozen: j.progress };
+    return { ...t, label: 'Last played' };
+  };
+  const SURE = { setup: 1, auth: 1, premium: 1, forbidden: 1 };   // answers that will not fix themselves in a minute
+  let mode = '', fails = 0, shown = null, sTimer = 0, lastAsk = 0, nextAt = 0, inView = true;
+  // ask often while Spotify answers and the card is near the screen; rarely while Discord stands in
+  const every = () => mode === 'discord' ? 300000 : document.hidden ? 60000 : inView ? 8000 : 30000;
+  function plan(ms) { clearTimeout(sTimer); nextAt = Date.now() + ms; sTimer = setTimeout(spotify, Math.max(0, ms)); }
+  async function spotify() {
+    clearTimeout(sTimer);
+    lastAsk = Date.now();
+    let j = null;
+    try { j = await (await fetch(NOW_URL, { cache: 'no-store' })).json(); } catch (e) { /* offline or blocked */ }
+    if (j && j.ok) {
+      fails = 0;
+      if (mode !== 'spotify') { mode = 'spotify'; discordOff(); }
+      render(shown = fromSpotify(j));
+    } else if (mode !== 'discord' && ((j && SURE[j.reason]) || ++fails >= 3)) {
+      if (j && j.reason) console.warn('Spotify:', j.reason, j.message || '');
+      mode = 'discord';
+      if (DISCORD_ID) discordOn(); else render(null);
+    }
+    let ms = every();
+    if (mode === 'spotify' && shown && shown.live) ms = Math.min(ms, Math.max(1500, shown.end - Date.now() + 800));   // catch the next track
+    plan(ms);
+  }
+  // the card came near the screen or the tab came back: bring the next check forward
+  const hurry = () => { if (NOW_URL && lastAsk && nextAt > lastAsk + every()) plan(lastAsk + every() - Date.now()); };
+  document.addEventListener('visibilitychange', hurry);
+  if ('IntersectionObserver' in window) new IntersectionObserver(e => { inView = e[e.length - 1].isIntersecting; hurry(); }, { rootMargin: '50% 0px' }).observe(wrap);
+
+  /* ---------- Discord presence through Lanyard ---------- */
+  const fromLanyard = p => {
+    const s = p && p.listening_to_spotify && p.spotify;
+    if (!s) return { idle: p && p.discord_status ? 'Discord: ' + (STATUS[p.discord_status] || 'offline') : '' };
+    const tsp = s.timestamps || {};
+    return { label: 'Now playing', live: true, song: s.song || 'Unknown track', artist: (s.artist || '').replace(/;\s*/g, ', '), art: s.album_art_url,
+             url: s.track_id ? 'https://open.spotify.com/track/' + s.track_id : '', start: tsp.start, end: tsp.end };
+  };
+  let on = false, stopped = false, live = false, retry = 2000, ws = null, hb = 0;
   async function poll() {
     try {
       const r = await fetch(REST_URL + DISCORD_ID, { cache: 'no-store' });
       const j = await r.json();
-      if (j && j.success && j.data) { if (!live) render(j.data); }
+      if (!on) return;
+      if (j && j.success && j.data) { if (!live) render(fromLanyard(j.data)); }
       else if (j && j.success === false) { stopped = true; console.warn('Lanyard:', j.error && j.error.message); }
     } catch (e) { /* offline or blocked: keep the last state */ }
   }
   function connect() {
-    if (stopped) return;
-    let ws, hb = 0;
+    if (stopped || !on) return;
     try { ws = new WebSocket(WS_URL); } catch (e) { setTimeout(() => { poll(); connect(); }, retry); retry = Math.min(retry * 2, 60000); return; }
     ws.onmessage = e => {
       let m; try { m = JSON.parse(e.data); } catch (_) { return; }
       if (m.op === 1) {
         clearInterval(hb);
-        hb = setInterval(() => { if (ws.readyState === 1) ws.send('{"op":3}'); }, (m.d && m.d.heartbeat_interval) || 30000);
+        hb = setInterval(() => { if (ws && ws.readyState === 1) ws.send('{"op":3}'); }, (m.d && m.d.heartbeat_interval) || 30000);
         ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_ID } }));
       } else if (m.op === 0 && m.d && (m.t === 'INIT_STATE' || m.t === 'PRESENCE_UPDATE')) {
         const p = ('listening_to_spotify' in m.d || 'discord_status' in m.d) ? m.d : m.d[DISCORD_ID];
-        if (p) { retry = 2000; live = true; render(p); }
+        if (p && on) { retry = 2000; live = true; render(fromLanyard(p)); }
       }
     };
-    ws.onclose = () => { clearInterval(hb); live = false; if (stopped) return; setTimeout(connect, retry); retry = Math.min(retry * 2, 60000); poll(); };
+    ws.onclose = () => { clearInterval(hb); live = false; if (stopped || !on) return; setTimeout(connect, retry); retry = Math.min(retry * 2, 60000); poll(); };
   }
+  function discordOn() { if (on) return; on = true; render(null); poll(); connect(); }
+  function discordOff() { if (!on) return; on = false; live = false; clearInterval(hb); if (ws) { ws.onclose = null; ws.close(); ws = null; } }
 
   if (location.hash === '#demo') {
     const now = Date.now();
     wrap.hidden = false;
-    render({ discord_status: 'online', listening_to_spotify: true, spotify: { song: 'Demo track', artist: 'Artist; Featured artist', album_art_url: 'assets/sit.webp', track_id: '', timestamps: { start: now - 42000, end: now + 173000 } } });
-  } else if (DISCORD_ID) { wrap.hidden = false; render(null); poll(); connect(); }
+    render({ label: 'Now playing', live: true, song: 'Demo track', artist: 'Artist, Featured artist', art: 'assets/sit.webp', url: '', start: now - 42000, end: now + 173000 });
+  } else if (NOW_URL) { wrap.hidden = false; render(null); spotify(); }
+  else if (DISCORD_ID) { wrap.hidden = false; discordOn(); }
 })();
 </script>
 </body>
