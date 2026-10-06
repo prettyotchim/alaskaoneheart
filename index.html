@@ -25,7 +25,7 @@
   --red:#e3132b; --red-l:#c40f23; --red-r:#8f0a18;
   --wh-t:#ffffff; --wh-l:#f6e0e2; --wh-r:#e2b9bd;
   --bg:#ffffff; --ink:#141014; --mute:#857a80;
-  --u: max(1vw, 5.4px);
+  --u: 1vw;   /* the whole composition is 100u wide, so it always fits the screen */
   color-scheme: light;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -58,7 +58,7 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .edge{left:max(calc(var(--u)*5.6), calc(var(--u)*50 - 50vw + 16px))}
 .role{position:absolute;top:calc(var(--u)*37.4);font-family:Anton,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
 /* facts, then the scroll hint, stacked so a taller list on phones pushes the hint down */
-.info{position:absolute;top:calc(var(--u)*42.8);display:flex;flex-direction:column;align-items:flex-start;gap:calc(var(--u)*1.6)}
+.info{position:absolute;top:calc(var(--u)*42.8);display:flex;flex-direction:column;align-items:flex-start;gap:max(calc(var(--u)*1.6),12px)}
 .info .tag,.info .bar{position:static}
 .info .bar{width:calc(var(--u)*12);margin-top:calc(var(--u)*-.6)}
 .facts{display:grid;grid-template-columns:auto auto;column-gap:1.6em;row-gap:.6em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;font-variant-numeric:tabular-nums}
@@ -66,10 +66,9 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .facts dd{font-weight:700;color:var(--ink)}
 .facts b{color:var(--red)}
 .tag{white-space:nowrap}
-/* phones: the layout is wider than the screen, so labels sit over the line drawings; give them a paper backing */
+/* phones: decorative figure labels would land on the lines at this scale */
 @media (max-width:700px){
   .tag.deco{display:none}
-  .role,.facts,.info .tag,.hero>.tag.edge{background:var(--bg);padding:.25em .45em;margin-left:-.45em}
 }
 /* --- girls --- */
 .girl{position:absolute;z-index:2;will-change:transform}
@@ -92,6 +91,7 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 /* wall: a normal-height block; the girls only move with the mouse or the phone's tilt */
 #wallblock{position:relative}
 #stage{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden}
+@media (max-aspect-ratio:4/5){#stage{height:min(100svh,150vw);min-height:0}#stage .backword{top:9%}}
 #stage .floor{position:absolute;left:0;right:0;bottom:-8%;height:42%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 24.3%,100% 24.3%,100% 100%,0 100%);will-change:transform}
 #stage .backword{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
 #ring{position:absolute;inset:0;z-index:1}
@@ -166,7 +166,7 @@ footer b{color:var(--red)}
     <div class="spark" style="left:calc(var(--u)*8);top:calc(var(--u)*112)"></div>
     <div class="spark" style="left:calc(var(--u)*88);top:calc(var(--u)*128);transform:scale(.7)"></div>
     <div class="spark" style="left:calc(var(--u)*40);top:calc(var(--u)*196);transform:scale(.8)"></div>
-    <div class="tag edge" style="top:calc(var(--u)*222)">02 / <b>red room</b></div>
+    <div class="tag edge deco" style="top:calc(var(--u)*222)">02 / <b>red room</b></div>
     <div class="tag deco" style="left:calc(var(--u)*76);top:calc(var(--u)*92)">fig. <b>a</b> — wall / floor</div>
     <div class="tag deco" style="left:calc(var(--u)*33);top:calc(var(--u)*177)">fig. <b>b</b> — cross</div>
   </div>
@@ -285,6 +285,18 @@ const LINES = [
  }
 ];
 
+if (matchMedia('(max-width:1100px)').matches) {
+  // phones and tablets: the about text needs the paper under it, so line C skips its zigzag and box and enters from the right edge,
+  // landing on the same point above the cross
+  const C = LINES[2], tail = C.segs.slice(-2);
+  let p = C.start.slice();
+  for (const sg of C.segs.slice(0, -2)) { const d = proj(parseDir(sg[0])); p = [p[0]+d[0]*sg[2], p[1]+d[1]*sg[2]]; }
+  const L2 = 11, dz = proj(parseDir('+z')), dx = proj(parseDir('-x'));
+  const q = [p[0]-dz[0]*L2, p[1]-dz[1]*L2], L1 = (104 - q[0]) / -dx[0];
+  C.start = [q[0]-dx[0]*L1, q[1]-dx[1]*L1];
+  C.segs = [['-x','y',L1], ['+z','y',L2], ...tail];
+  C.boxes = [];
+}
 const NS='http://www.w3.org/2000/svg';
 const lback=document.getElementById('lback'), lfront=document.getElementById('lfront');
 function mk(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
@@ -475,7 +487,7 @@ let AMP = 0, floorF = 0, SH = 0;
 function layoutWall(){
   const W = stage.clientWidth, H = SH = stage.clientHeight, wide = W > H;
   const R = wide ? Math.max(W*.95, H*1.5) : W*2.1;          // radius of the wall
-  const k = wide ? Math.min(1, W/H*.75) : .62;               // card height scale
+  const k = wide ? Math.min(1, W/H*.75) : .77;               // card height scale
   const P = Math.max(W, H)*.8;                                // camera distance
   const VX = W/2, VY = H*.38;                                  // vanishing point
   for (const el of wgs) {
@@ -486,14 +498,11 @@ function layoutWall(){
     el._s = s; el._w = w; el._hh = h; el._P = P;
     el._X = VX - r*Math.sin(a)*s;                              // bottom centre on screen, camera at rest
     el._Y = el._bust ? (el._lift - (1 - k)*.29)*H : VY + (H - el._lift*H/100 - VY)*s;   // smaller busts on phones sit higher
-    el._f = 1 - s;                                             // screen shift per px of camera move: far +, near -
+    el._f = el._bust ? 1 - s : .32 + (1 - s)*.5;               // shift per px of camera move: back row and word go with it, busts against
     el.style.zIndex = Math.round(z + 1000);
   }
-  const back = wgs.find(e => !e._bust && e._ang === 0);
-  floorF = back._f;
-  // camera travel: about 4% of the width between the front busts and the back row on desktop, more on phones
-  const near = Math.min(...wgs.filter(e => e._bust).map(e => e._f));
-  AMP = (wide ? W*.04 : W*.09) / (back._f - near);
+  floorF = wgs.find(e => !e._bust && e._ang === 0)._f;
+  AMP = wide ? W*.035 : W*.11;                                 // camera travel, bigger on phones so the tilt reads
   placeWall();
 }
 let camX = 0, camY = 0, aimX = 0, aimY = 0, wallSeen = false;
@@ -503,7 +512,7 @@ function placeWall(){
     const X = el._X + dx*el._f, Y = el._Y + dy*el._f;
     el.style.transform = `translate3d(${(X - el._w/2).toFixed(1)}px,${(Y - el._hh).toFixed(1)}px,0) scale(${el._s.toFixed(4)}) perspective(${el._P|0}px) rotateY(${(el._ang*.6).toFixed(1)}deg)`;
   }
-  backword.style.transform = `translate3d(calc(-50% + ${(dx*.5).toFixed(1)}px),${(dy*.5).toFixed(1)}px,0) skewX(-9deg)`;
+  backword.style.transform = `translate3d(calc(-50% + ${(dx*.6).toFixed(1)}px),${(dy*.6).toFixed(1)}px,0) skewX(-9deg)`;
   floor.style.transform = `translate3d(0,${(dy*floorF).toFixed(1)}px,0)`;
 }
 function wall(sy, vh){
