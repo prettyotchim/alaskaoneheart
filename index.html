@@ -1,4 +1,22 @@
-<title>Личный сайт Павла</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pavel · Video Editor</title>
+<meta name="description" content="Pavel. Video editor based in the Philippines.">
+<meta name="theme-color" content="#e3132b">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://alaskaoneheart.site/">
+<meta property="og:title" content="Pavel · Video Editor">
+<meta property="og:description" content="Video editor based in the Philippines.">
+<meta property="og:image" content="https://alaskaoneheart.site/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -6,11 +24,12 @@
 :root{
   --red:#e3132b; --red-l:#c40f23; --red-r:#8f0a18;
   --wh-t:#ffffff; --wh-l:#f6e0e2; --wh-r:#e2b9bd;
-  --bg:#ffffff; --ink:#141014;
+  --bg:#ffffff; --ink:#141014; --mute:#857a80;
   --u: max(1vw, 5.4px);
   color-scheme: light;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html,body{background:var(--bg);color:var(--ink);overflow-x:clip}
 body{font-family:'JetBrains Mono',ui-monospace,monospace;-webkit-font-smoothing:antialiased}
 #page{position:relative;overflow-x:clip}
@@ -30,11 +49,24 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .title .ghost{color:transparent;-webkit-text-stroke:calc(var(--u)*.13) var(--red);margin-left:calc(var(--u)*7)}
 .title .cut{position:relative}
 .title .cut::after{content:"";position:absolute;left:-2%;right:-2%;top:46%;height:calc(var(--u)*.7);background:#fff;transform:skewX(9deg)}
-.tag{position:absolute;font-size:calc(var(--u)*.85);letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
+.tag{position:absolute;font-size:max(calc(var(--u)*.85),9px);letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
 .tag b{color:var(--red)}
 .spark{position:absolute;width:calc(var(--u)*3);height:calc(var(--u)*3);color:var(--ink)}
 .spark svg{width:100%;height:100%;display:block}
 .bar{position:absolute;height:1px;background:var(--ink)}
+/* left-anchored hero text never leaves the screen on narrow phones */
+.edge{left:max(calc(var(--u)*5.6), calc(var(--u)*50 - 50vw + 16px))}
+.role{position:absolute;top:calc(var(--u)*37.4);font-family:Anton,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
+.facts{position:absolute;top:calc(var(--u)*42.8);display:grid;grid-template-columns:auto auto;column-gap:1.6em;row-gap:.6em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.facts dt{color:var(--mute)}
+.facts dd{font-weight:700;color:var(--ink)}
+.facts b{color:var(--red)}
+.tag{white-space:nowrap}
+/* phones: the layout is wider than the screen, so labels sit over the line drawings; give them a paper backing */
+@media (max-width:700px){
+  .tag.deco{display:none}
+  .role,.facts,.hero .tag.edge{background:var(--bg);padding:.25em .45em;margin-left:-.45em}
+}
 /* --- girls --- */
 .girl{position:absolute;z-index:2;will-change:transform}
 .girl img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
@@ -67,10 +99,31 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .wg.bust img{-webkit-mask-image:linear-gradient(#000 78%,transparent 99%);mask-image:linear-gradient(#000 78%,transparent 99%)}
 .wg.cutedge img{-webkit-mask-image:linear-gradient(transparent 0,#000 10%,#000 75%,transparent 99%),linear-gradient(90deg,transparent 0,#000 9%);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent 0,#000 10%,#000 75%,transparent 99%),linear-gradient(90deg,transparent 0,#000 9%);mask-composite:intersect}
 #stage .hud{position:absolute;inset:0;pointer-events:none;z-index:50}
-footer{position:relative;background:var(--ink);color:#fff;padding:calc(var(--u)*2.2) calc(var(--u)*4);display:flex;justify-content:space-between;font-size:calc(var(--u)*.85);letter-spacing:.18em;text-transform:uppercase}
+footer{position:relative;background:var(--ink);color:#fff;padding:calc(var(--u)*2.2) max(calc(var(--u)*4),16px);display:flex;flex-wrap:wrap;gap:1em;justify-content:space-between;font-size:max(calc(var(--u)*.85),9px);letter-spacing:.18em;text-transform:uppercase}
 footer b{color:var(--red)}
-@media (prefers-reduced-motion: reduce){.reveal,.wg .inner{transition:none}}
+/* now playing (Spotify via Discord presence) */
+.np{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:12px;width:min(320px,calc(100vw - 32px));padding:10px 14px 10px 10px;background:var(--ink);color:#fff;text-decoration:none;box-shadow:5px 5px 0 var(--red);font-family:'JetBrains Mono',ui-monospace,monospace;transition:transform .2s,box-shadow .2s}
+.np[href]:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
+.np:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.np-art{flex:none;position:relative;width:56px;height:56px;background:var(--red);display:grid;place-items:center;overflow:hidden;color:#fff}
+.np-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.np-art svg{width:24px;height:24px}
+.np-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.np-label{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.np-dot{width:6px;height:6px;border-radius:50%;background:#6d6468;flex:none}
+.np.playing .np-dot{background:var(--red);animation:np-pulse 1.4s ease-in-out infinite}
+.np-song{font-family:Anton,Impact,sans-serif;font-size:17px;line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-artist{font-size:11px;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-prog{display:none;align-items:center;gap:8px;margin-top:3px;font-size:9px;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}
+.np.has-time .np-prog{display:flex}
+.np-bar{flex:1;height:3px;background:rgba(255,255,255,.18);position:relative}
+.np-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red)}
+@keyframes np-pulse{50%{opacity:.3}}
+@media (max-width:480px){.np{gap:10px;padding:8px 12px 8px 8px}.np-art{width:46px;height:46px}.np-song{font-size:15px}}
+@media (prefers-reduced-motion: reduce){.reveal,.wg .inner{transition:none}.np-dot{animation:none!important}}
 </style>
+</head>
+<body>
 <div id="page">
 
 <svg class="lines" id="lback" viewBox="0 0 100 342" preserveAspectRatio="xMinYMin meet" aria-hidden="true"></svg>
@@ -79,18 +132,23 @@ footer b{color:var(--red)}
 <section id="s1">
   <div class="lay hero">
     <div class="title"><span>PAVEL</span><span class="ghost">PAVEL</span></div>
-    <div class="tag" style="left:calc(var(--u)*5.6);top:calc(var(--u)*3)">[ <b>✕✕</b> ] personal site — 2026</div>
-    <div class="tag" style="left:calc(var(--u)*5.6);top:calc(var(--u)*39)">scroll <b>↓</b></div>
-    <div class="bar" style="left:calc(var(--u)*5.6);top:calc(var(--u)*41);width:calc(var(--u)*12)"></div>
-    <div class="tag" style="left:calc(var(--u)*82);top:calc(var(--u)*3)">vol. <b>01</b></div>
+    <div class="tag edge" style="top:calc(var(--u)*3)">[ <b>✕✕</b> ] alaskaoneheart.site</div>
+    <div class="role edge">Video editor</div>
+    <dl class="facts edge">
+      <dt>Based in</dt><dd>Philippines</dd>
+      <dt>Local time</dt><dd><span id="ptime">--:--</span> <b>UTC+8</b></dd>
+    </dl>
+    <div class="tag edge" style="top:calc(var(--u)*50.5)">scroll <b>↓</b></div>
+    <div class="bar edge" style="top:calc(var(--u)*52.5);width:calc(var(--u)*12)"></div>
+    <div class="tag deco" style="left:calc(var(--u)*82);top:calc(var(--u)*3)">vol. <b>01</b></div>
     <div class="spark" style="left:calc(var(--u)*52);top:calc(var(--u)*6)"></div>
     <div class="spark" style="left:calc(var(--u)*47);top:calc(var(--u)*30);transform:scale(.6)"></div>
     <div class="spark" style="left:calc(var(--u)*8);top:calc(var(--u)*112)"></div>
     <div class="spark" style="left:calc(var(--u)*88);top:calc(var(--u)*128);transform:scale(.7)"></div>
     <div class="spark" style="left:calc(var(--u)*40);top:calc(var(--u)*196);transform:scale(.8)"></div>
-    <div class="tag" style="left:calc(var(--u)*5.6);top:calc(var(--u)*222)">02 / <b>red room</b></div>
-    <div class="tag" style="left:calc(var(--u)*76);top:calc(var(--u)*92)">fig. <b>a</b> — wall / floor</div>
-    <div class="tag" style="left:calc(var(--u)*33);top:calc(var(--u)*177)">fig. <b>b</b> — cross</div>
+    <div class="tag edge" style="top:calc(var(--u)*222)">02 / <b>red room</b></div>
+    <div class="tag deco" style="left:calc(var(--u)*76);top:calc(var(--u)*92)">fig. <b>a</b> — wall / floor</div>
+    <div class="tag deco" style="left:calc(var(--u)*33);top:calc(var(--u)*177)">fig. <b>b</b> — cross</div>
   </div>
   <div class="lay">
     <div class="girl echo" id="g4" data-par="-.06" style="left:calc(var(--u)*57);top:calc(var(--u)*1);width:calc(var(--u)*40)">
@@ -111,7 +169,7 @@ footer b{color:var(--red)}
     <div class="lay">
       <div class="s2type" style="left:calc(var(--u)*58);top:calc(var(--u)*16)"><div class="big2">RED<br>ROOM</div></div>
       <div class="tag" style="left:calc(var(--u)*58.6);top:calc(var(--u)*11)">[ <b>02</b> ] — the cube</div>
-      <div class="tag" style="left:calc(var(--u)*76);top:calc(var(--u)*96)">sit <b>here</b></div>
+      <div class="tag deco" style="left:calc(var(--u)*76);top:calc(var(--u)*96)">sit <b>here</b></div>
       <div class="spark" style="left:calc(var(--u)*80);top:calc(var(--u)*30)"></div>
       <div class="spark" style="left:calc(var(--u)*24);top:calc(var(--u)*74);transform:scale(.6)"></div>
       <div class="bar" style="left:calc(var(--u)*76);top:calc(var(--u)*98.6);width:calc(var(--u)*14)"></div>
@@ -129,9 +187,19 @@ footer b{color:var(--red)}
       </div>
     </div>
   </div>
-  <footer><span>© 2026 — <b>✕✕</b></span><span>template / visual only</span></footer>
+  <footer><span>© 2026 <b>Pavel</b></span><span>Video editor — Philippines</span></footer>
 </section>
 </div>
+
+<a class="np" id="np" target="_blank" rel="noopener" hidden>
+  <span class="np-art"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2 20 3v12.6a2.6 2.6 0 1 1-2-2.5V7.4l-8 1.5v8.8a2.6 2.6 0 1 1-2-2.5z" fill="currentColor"/></svg><img id="np-img" alt="" hidden></span>
+  <span class="np-body">
+    <span class="np-label"><i class="np-dot"></i><span id="np-state">Spotify</span></span>
+    <span class="np-song" id="np-song"></span>
+    <span class="np-artist" id="np-artist"></span>
+    <span class="np-prog"><span id="np-el">0:00</span><span class="np-bar"><span class="np-fill" id="np-fill"></span></span><span id="np-tot">0:00</span></span>
+  </span>
+</a>
 
 <script>
 (() => {
@@ -410,3 +478,95 @@ measure(); layoutWall();
 req();
 })();
 </script>
+<script>
+/* local time in the Philippines (UTC+8, no daylight saving) */
+(() => {
+  const el = document.getElementById('ptime');
+  const tick = () => {
+    const d = new Date(Date.now() + 8 * 3600e3);
+    el.textContent = String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0');
+  };
+  tick(); setInterval(tick, 10000);
+})();
+</script>
+<script>
+/* Now playing: Spotify activity read from Discord presence through Lanyard (https://github.com/Phineas/lanyard).
+   Setup: join discord.gg/lanyard, connect Spotify in Discord, put your Discord user ID below. Empty ID = widget off. */
+(() => {
+  const DISCORD_ID = '';
+  const WS_URL = 'wss://api.lanyard.rest/socket', REST_URL = 'https://api.lanyard.rest/v1/users/';
+  const $ = id => document.getElementById(id);
+  const np = $('np'), img = $('np-img'), song = $('np-song'), artist = $('np-artist'), state = $('np-state'),
+        fill = $('np-fill'), elapsed = $('np-el'), total = $('np-tot');
+  const STATUS = { online: 'online', idle: 'away', dnd: 'do not disturb', offline: 'offline' };
+  const fmt = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  let ts = null, timer = 0;
+
+  function tick() {
+    if (!ts) return;
+    const len = ts.end - ts.start, cur = Math.min(len, Math.max(0, Date.now() - ts.start));
+    fill.style.width = (len > 0 ? cur / len * 100 : 0) + '%';
+    elapsed.textContent = fmt(cur);
+    total.textContent = fmt(len);
+  }
+
+  function render(p) {
+    const s = p.listening_to_spotify && p.spotify;
+    clearInterval(timer); ts = null;
+    np.hidden = false;
+    np.classList.toggle('playing', !!s);
+    if (s) {
+      state.textContent = 'Listening on Spotify';
+      song.textContent = s.song || 'Unknown track';
+      artist.textContent = (s.artist || '').replace(/;\s*/g, ', ');
+      img.hidden = !s.album_art_url;
+      if (s.album_art_url && img.getAttribute('src') !== s.album_art_url) img.src = s.album_art_url;
+      if (s.track_id) np.href = 'https://open.spotify.com/track/' + s.track_id; else np.removeAttribute('href');
+      np.setAttribute('aria-label', 'Now playing on Spotify: ' + song.textContent + ' by ' + artist.textContent);
+      if (s.timestamps && s.timestamps.start && s.timestamps.end) { ts = s.timestamps; tick(); timer = setInterval(tick, 1000); }
+    } else {
+      state.textContent = 'Spotify';
+      song.textContent = 'Nothing playing';
+      artist.textContent = 'Discord: ' + (STATUS[p.discord_status] || 'offline');
+      img.hidden = true;
+      np.removeAttribute('href');
+      np.removeAttribute('aria-label');
+    }
+    np.classList.toggle('has-time', !!ts);
+  }
+
+  let stopped = false, live = false, retry = 2000;
+  async function poll() {
+    try {
+      const r = await fetch(REST_URL + DISCORD_ID, { cache: 'no-store' });
+      const j = await r.json();
+      if (j && j.success && j.data) { if (!live) render(j.data); }
+      else if (j && j.success === false) { stopped = true; np.hidden = true; console.warn('Lanyard:', j.error && j.error.message); }
+    } catch (e) { /* offline or blocked: keep the last state */ }
+  }
+  function connect() {
+    if (stopped) return;
+    let ws, hb = 0;
+    try { ws = new WebSocket(WS_URL); } catch (e) { setTimeout(() => { poll(); connect(); }, retry); retry = Math.min(retry * 2, 60000); return; }
+    ws.onmessage = e => {
+      let m; try { m = JSON.parse(e.data); } catch (_) { return; }
+      if (m.op === 1) {
+        clearInterval(hb);
+        hb = setInterval(() => { if (ws.readyState === 1) ws.send('{"op":3}'); }, (m.d && m.d.heartbeat_interval) || 30000);
+        ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_ID } }));
+      } else if (m.op === 0 && m.d && (m.t === 'INIT_STATE' || m.t === 'PRESENCE_UPDATE')) {
+        const p = ('listening_to_spotify' in m.d || 'discord_status' in m.d) ? m.d : m.d[DISCORD_ID];
+        if (p) { retry = 2000; live = true; render(p); }
+      }
+    };
+    ws.onclose = () => { clearInterval(hb); live = false; if (stopped) return; setTimeout(connect, retry); retry = Math.min(retry * 2, 60000); poll(); };
+  }
+
+  if (location.hash === '#demo') {
+    const now = Date.now();
+    render({ discord_status: 'online', listening_to_spotify: true, spotify: { song: 'Demo track', artist: 'Artist; Featured artist', album_art_url: 'assets/sit.webp', track_id: '', timestamps: { start: now - 42000, end: now + 173000 } } });
+  } else if (DISCORD_ID) { poll(); connect(); }
+})();
+</script>
+</body>
+</html>
