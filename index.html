@@ -1,0 +1,412 @@
+<title>Личный сайт Павла</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#e3132b; --red-l:#c40f23; --red-r:#8f0a18;
+  --wh-t:#ffffff; --wh-l:#f6e0e2; --wh-r:#e2b9bd;
+  --bg:#ffffff; --ink:#141014;
+  --u: max(1vw, 5.4px);
+  color-scheme: light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);overflow-x:clip}
+body{font-family:'JetBrains Mono',ui-monospace,monospace;-webkit-font-smoothing:antialiased}
+#page{position:relative;overflow-x:clip}
+.lay{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--u)*100);height:100%;pointer-events:none}
+section{position:relative}
+#s1{height:calc(var(--u)*230);background:#fff}
+#s2{background:var(--red);color:#fff}
+#cubeblock{height:calc(var(--u)*112)}
+svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--u)*100);height:calc(var(--u)*342);overflow:visible;pointer-events:none}
+#lback{z-index:1} #lfront{z-index:3}
+.u{position:absolute}
+/* --- hero type --- */
+.hero{z-index:2}
+.title{position:absolute;left:max(calc(var(--u)*5), calc(var(--u)*50 - 50vw + 14px));top:calc(var(--u)*7);font-family:Anton,Impact,sans-serif;color:var(--red);
+  font-size:calc(var(--u)*17.5);line-height:.82;letter-spacing:-.01em;transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
+.title span{display:block}
+.title .ghost{color:transparent;-webkit-text-stroke:calc(var(--u)*.13) var(--red);margin-left:calc(var(--u)*7)}
+.title .cut{position:relative}
+.title .cut::after{content:"";position:absolute;left:-2%;right:-2%;top:46%;height:calc(var(--u)*.7);background:#fff;transform:skewX(9deg)}
+.tag{position:absolute;font-size:calc(var(--u)*.85);letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
+.tag b{color:var(--red)}
+.spark{position:absolute;width:calc(var(--u)*3);height:calc(var(--u)*3);color:var(--ink)}
+.spark svg{width:100%;height:100%;display:block}
+.bar{position:absolute;height:1px;background:var(--ink)}
+/* --- girls --- */
+.girl{position:absolute;z-index:2;will-change:transform}
+.girl img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.girl.echo img{filter:drop-shadow(calc(var(--u)*1.1) calc(var(--u)*.6) 0 var(--red))}
+.girl.fade img{-webkit-mask-image:linear-gradient(#000 72%,transparent 97%);mask-image:linear-gradient(#000 72%,transparent 97%)}
+.girl .shadow{position:absolute;z-index:-1;background:rgba(143,10,24,.16);border-radius:50%}
+.reveal{clip-path:inset(0 0 100% 0);transition:clip-path 1.1s cubic-bezier(.7,0,.2,1)}
+.reveal.in{clip-path:inset(-20% -20% -20% -20%)}
+/* sitting girl */
+#sitter{position:absolute;z-index:5}
+#sitter img{width:100%;display:block;filter:drop-shadow(calc(var(--u)*-.8) calc(var(--u)*.5) 0 rgba(90,0,12,.35))}
+/* --- section 2 --- */
+.s2type{position:absolute;z-index:2}
+.big2{font-family:Anton,Impact,sans-serif;color:transparent;-webkit-text-stroke:calc(var(--u)*.12) rgba(255,255,255,.85);font-size:calc(var(--u)*13);line-height:.85;transform:skewX(-9deg);white-space:nowrap}
+#s2 .tag{color:#fff}
+#s2 .tag b{color:#fff;background:var(--ink);padding:0 .4em}
+#s2 .spark{color:#fff}
+#s2 .bar{background:#fff}
+/* wall */
+#wallblock{height:240vh;position:relative}
+#stage{position:sticky;top:0;height:100vh;overflow:hidden;perspective:1100px;perspective-origin:50% 38%}
+#stage .floor{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 30%,100% 30%,100% 100%,0 100%)}
+#stage .backword{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em}
+#ring{position:absolute;left:50%;top:0;width:0;height:100%;transform-style:preserve-3d}
+.wg{position:absolute;bottom:0;transform-style:preserve-3d;transform-origin:50% 100%}
+.wg .inner{transform-origin:50% 100%;transition:transform 1s cubic-bezier(.2,.9,.25,1),opacity .6s;opacity:0;transform:translateY(40%)}
+.wg.in .inner{opacity:1;transform:none}
+.wg img{display:block;width:100%;height:auto;filter:drop-shadow(-10px 6px 0 rgba(20,0,4,.28))}
+.wg.mir img{transform:scaleX(-1);filter:drop-shadow(10px 6px 0 rgba(20,0,4,.28))}
+.wg.bust img{-webkit-mask-image:linear-gradient(#000 78%,transparent 99%);mask-image:linear-gradient(#000 78%,transparent 99%)}
+.wg.cutedge img{-webkit-mask-image:linear-gradient(transparent 0,#000 10%,#000 75%,transparent 99%),linear-gradient(90deg,transparent 0,#000 9%);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent 0,#000 10%,#000 75%,transparent 99%),linear-gradient(90deg,transparent 0,#000 9%);mask-composite:intersect}
+#stage .hud{position:absolute;inset:0;pointer-events:none;z-index:50}
+footer{position:relative;background:var(--ink);color:#fff;padding:calc(var(--u)*2.2) calc(var(--u)*4);display:flex;justify-content:space-between;font-size:calc(var(--u)*.85);letter-spacing:.18em;text-transform:uppercase}
+footer b{color:var(--red)}
+@media (prefers-reduced-motion: reduce){.reveal,.wg .inner{transition:none}}
+</style>
+<div id="page">
+
+<svg class="lines" id="lback" viewBox="0 0 100 342" preserveAspectRatio="xMinYMin meet" aria-hidden="true"></svg>
+<svg class="lines" id="lfront" viewBox="0 0 100 342" preserveAspectRatio="xMinYMin meet" aria-hidden="true"></svg>
+
+<section id="s1">
+  <div class="lay hero">
+    <div class="title"><span>PAVEL</span><span class="ghost">PAVEL</span></div>
+    <div class="tag" style="left:calc(var(--u)*5.6);top:calc(var(--u)*3)">[ <b>✕✕</b> ] personal site — 2026</div>
+    <div class="tag" style="left:calc(var(--u)*5.6);top:calc(var(--u)*39)">scroll <b>↓</b></div>
+    <div class="bar" style="left:calc(var(--u)*5.6);top:calc(var(--u)*41);width:calc(var(--u)*12)"></div>
+    <div class="tag" style="left:calc(var(--u)*82);top:calc(var(--u)*3)">vol. <b>01</b></div>
+    <div class="spark" style="left:calc(var(--u)*52);top:calc(var(--u)*6)"></div>
+    <div class="spark" style="left:calc(var(--u)*47);top:calc(var(--u)*30);transform:scale(.6)"></div>
+    <div class="spark" style="left:calc(var(--u)*8);top:calc(var(--u)*112)"></div>
+    <div class="spark" style="left:calc(var(--u)*88);top:calc(var(--u)*128);transform:scale(.7)"></div>
+    <div class="spark" style="left:calc(var(--u)*40);top:calc(var(--u)*196);transform:scale(.8)"></div>
+    <div class="tag" style="left:calc(var(--u)*5.6);top:calc(var(--u)*222)">02 / <b>red room</b></div>
+    <div class="tag" style="left:calc(var(--u)*76);top:calc(var(--u)*92)">fig. <b>a</b> — wall / floor</div>
+    <div class="tag" style="left:calc(var(--u)*33);top:calc(var(--u)*177)">fig. <b>b</b> — cross</div>
+  </div>
+  <div class="lay">
+    <div class="girl echo" id="g4" data-par="-.06" style="left:calc(var(--u)*57);top:calc(var(--u)*1);width:calc(var(--u)*40)">
+      <div class="shadow" id="g4sh"></div>
+      <img src="assets/ref4.webp" alt="">
+    </div>
+    <div class="girl" id="g1" style="left:0;top:calc(var(--u)*88);width:calc(var(--u)*50.46)">
+      <img src="assets/ref6.webp" alt="">
+    </div>
+    <div class="girl echo fade reveal" id="g3" data-par="-.05" style="left:calc(var(--u)*49);top:calc(var(--u)*138);width:calc(var(--u)*50)">
+      <img src="assets/ref3.webp" alt="">
+    </div>
+  </div>
+</section>
+
+<section id="s2">
+  <div id="cubeblock">
+    <div class="lay">
+      <div class="s2type" style="left:calc(var(--u)*58);top:calc(var(--u)*16)"><div class="big2">RED<br>ROOM</div></div>
+      <div class="tag" style="left:calc(var(--u)*58.6);top:calc(var(--u)*11)">[ <b>02</b> ] — the cube</div>
+      <div class="tag" style="left:calc(var(--u)*76);top:calc(var(--u)*96)">sit <b>here</b></div>
+      <div class="spark" style="left:calc(var(--u)*80);top:calc(var(--u)*30)"></div>
+      <div class="spark" style="left:calc(var(--u)*24);top:calc(var(--u)*74);transform:scale(.6)"></div>
+      <div class="bar" style="left:calc(var(--u)*76);top:calc(var(--u)*98.6);width:calc(var(--u)*14)"></div>
+      <div id="sitter"><img src="assets/sit.webp" alt=""></div>
+    </div>
+  </div>
+  <div id="wallblock">
+    <div id="stage">
+      <div class="backword">GIRLS</div>
+      <div class="floor"></div>
+      <div id="ring"></div>
+      <div class="hud">
+        <div class="tag" style="left:4vw;top:4vh">[ <b>03</b> ] — the wall</div>
+        <div class="tag" style="right:4vw;top:4vh">look <b>at me</b></div>
+      </div>
+    </div>
+  </div>
+  <footer><span>© 2026 — <b>✕✕</b></span><span>template / visual only</span></footer>
+</section>
+</div>
+
+<script>
+(() => {
+const SPARK = '<svg viewBox="-10 -10 20 20"><path d="M0-10C.6-3 3-.6 10 0 3 .6.6 3 0 10-.6 3-3 .6-10 0-3-.6-.6-3 0-10Z" fill="currentColor"/></svg>';
+document.querySelectorAll('.spark').forEach(s => s.innerHTML = SPARK);
+
+/* ---------- projection (orthographic, dimetric) ---------- */
+const YAW = 42 * Math.PI/180, PIT = 31 * Math.PI/180;
+const AX = {
+  x: [Math.cos(YAW), Math.sin(YAW)*Math.sin(PIT)],
+  z: [-Math.sin(YAW), Math.cos(YAW)*Math.sin(PIT)],
+  y: [0, -Math.cos(PIT)]
+};
+const V3 = {x:[1,0,0], y:[0,1,0], z:[0,0,1]};
+const proj = v => [v[0]*AX.x[0] + v[1]*AX.y[0] + v[2]*AX.z[0], v[0]*AX.x[1] + v[1]*AX.y[1] + v[2]*AX.z[1]];
+const parseDir = s => { const sg = s[0]==='-'?-1:1; const a = V3[s[1]]; return a.map(c=>c*sg); };
+const cross = (a,b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+const BOUND = 230; // section 1 / 2 boundary in u
+
+/* ---------- line routes ----------
+   seg: [direction, surfaceNormal, length, opts]
+   normal 'y' = floor/top, 'z' = front-left face, 'x' = front-right face */
+const LINES = [
+ { // A: main line -> plunges into the red room and becomes the white cube
+   start:[36,-6], w:2.6, k:.6,
+   segs:[
+    ['-y','z',44],['+z','y',4],['+x','y',66],['-y','x',24],['+x','y',3],['+z','y',30],
+    ['-y','z',26],['+z','y',40,{front:1}],['-y','z',30],['+z','y',6],['+x','y',22],['-y','x',20],['+x','y',3],['+z','y',6],
+    ['-y','z',73,{k:.95}],
+    // red room: the line widens and folds over a box sized to the sitting girl (22 x 22 x 32)
+    ['-y','z',26,{w1:22,k:.95}],['+z','y',22,{w:22,top:1,k:.95}],['-y','z',32,{w:22,front:1,cube:1,k:.95}],['+z','y',22,{w:22,w1:2.6,front:1,k:.95}],
+    ['+x','y',70,{front:1,k:.95}]
+   ]},
+ { // B: right column, behind the standing girl
+   start:[95,-6], w:1.9, k:.82,
+   segs:[['-y','z',20],['+z','y',26],['-y','z',10],['+z','y',10],['+x','y',30],['-y','x',40],['+x','y',12]]
+ },
+ { // C: wraps a cube under the title, then pours into the red cross behind girl 1
+   start:[-4,40], w:2.1, k:.7,
+   segs:[['+x','z',10],['-y','z',14],['+z','y',3],['+x','y',18],['-z','y',14],['+y','z',12],['-z','y',10],['+x','y',12],['-y','x',12],['+x','y',6],['+z','y',37.7],
+         ['-y','z',10,{w1:24,fill:'var(--red)',shadow:[1.3,.9],flat:1}],['-y','z',112,{w:24,fill:'var(--red)',shadow:[1.3,.9],flat:1,cross:1}]],
+   boxes:[{at:5, o:[-3,0,-12.5], s:[15,12,12.5]}]
+ },
+ { // D: staircase descending toward the viewer, passes behind girl 3
+   start:[92,92], w:1.7, k:.52,
+   segs:[['-y','x',8],['+x','y',2],['+z','y',6],
+         ['-y','z',5],['+z','y',4],['-y','z',5],['+z','y',4],['-y','z',5],['+z','y',4],['-y','z',5],['+z','y',4],['-y','z',5],['+z','y',6],
+         ['+x','y',34]]
+ },
+ { // E: door frame on the wall around girl 3, then out in front of her
+   start:[48,127], w:2.0, k:.66,
+   segs:[['+x','z',48],['-y','z',50],['-x','z',22],['+z','y',18,{front:1}],['-y','z',10,{front:1}],['+z','y',8,{front:1}],['+x','y',50,{front:1}],['-y','x',34],['+x','y',30]]
+ },
+ { // F: lower-left runner
+   start:[-6,182], w:2.3, k:.78,
+   segs:[['+x','z',20],['-y','z',10],['+z','y',2],['+x','y',30],['-y','x',14],['+x','y',3],['+z','y',40]]
+ }
+];
+
+const NS='http://www.w3.org/2000/svg';
+const lback=document.getElementById('lback'), lfront=document.getElementById('lfront');
+function mk(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+for (const svg of [lback,lfront]) {
+  const defs = mk('defs',{},svg);
+  const c1 = mk('clipPath',{id:svg.id+'-ct'},defs); mk('rect',{x:-500,y:-500,width:1100,height:500+BOUND},c1);
+  const c2 = mk('clipPath',{id:svg.id+'-cb'},defs); mk('rect',{x:-500,y:BOUND,width:1100,height:1000},c2);
+  svg._ghost = mk('g',{},svg);
+  svg._top = mk('g',{'clip-path':`url(#${svg.id}-ct)`},svg);
+  svg._bot = mk('g',{'clip-path':`url(#${svg.id}-cb)`},svg);
+}
+const COL = { top:{y:'var(--red)', z:'var(--red-l)', x:'var(--red-r)'}, bot:{y:'var(--wh-t)', z:'var(--wh-l)', x:'var(--wh-r)'} };
+
+/* build geometry */
+for (const L of LINES) {
+  L.segs = L.segs.filter(Boolean);
+  let p = L.start.slice(), cum = 0, w = L.w;
+  L.S = L.segs.map((s,i) => {
+    const o = s[3]||{};
+    const dir = parseDir(s[0]), n = V3[s[1]], len = s[2];
+    const w0 = o.w!=null ? o.w : w, w1 = o.w1!=null ? o.w1 : w0;
+    const pd = proj(dir), a = p.slice(), b = [p[0]+pd[0]*len, p[1]+pd[1]*len];
+    const wv = o.flat ? [1,0] : proj(cross(dir,n)); // flat: frontal shape, like the cross
+    const seg = {dir, n:s[1], len, a, b, pd, wv, w0, w1, c:cum, o};
+    p = b; cum += len; w = w1;
+    const svg = o.front ? lfront : lback;
+    if (o.shadow) seg.ps = mk('polygon',{fill:'var(--red-r)',transform:`translate(${o.shadow[0]} ${o.shadow[1]})`},svg._top);
+    seg.pt = mk('polygon',{fill:o.fill||COL.top[s[1]]},svg._top);
+    seg.pb = mk('polygon',{fill:COL.bot[s[1]]},svg._bot);
+    return seg;
+  });
+  L.S.forEach((s,i) => {
+    const pr = L.S[i-1], nx = L.S[i+1];
+    s.extA = pr && pr.n===s.n && pr.dir.join()!==s.dir.join() ? s.w0/2 : 0;
+    s.extB = nx && nx.n===s.n && nx.dir.join()!==s.dir.join() ? s.w1/2 : 0;
+    if (s.o.cube) L.cubeSeg = s;
+    if (s.o.top) L.topSeg = s;
+    if (s.o.cross) L.crossSeg = s;
+  });
+  L.total = cum; L.D = 0;
+  L.ghosts = (L.boxes||[]).map(bx => {
+    const A = L.S[bx.at].a, [ox,oy,oz]=bx.o, [sx,sy,sz]=bx.s;
+    const P=(x,y,z)=>{const q=proj([ox+x,oy+y,oz+z]);return [A[0]+q[0],A[1]+q[1]];};
+    const E=[[[0,sy,0],[sx,sy,0]],[[sx,sy,0],[sx,sy,sz]],[[sx,sy,sz],[0,sy,sz]],[[0,sy,sz],[0,sy,0]],
+             [[0,sy,sz],[0,0,sz]],[[sx,sy,sz],[sx,0,sz]],[[sx,sy,0],[sx,0,0]],[[0,0,sz],[sx,0,sz]],[[sx,0,sz],[sx,0,0]]];
+    const d = E.map(([u,v])=>{const p1=P(...u),p2=P(...v);return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)}L${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`}).join('');
+    const el = mk('path',{d,fill:'none',stroke:'var(--red)','stroke-width':1.2,'vector-effect':'non-scaling-stroke',pathLength:1,'stroke-dasharray':'1 1','stroke-dashoffset':1,opacity:.55},lback._ghost);
+    return {el, c:L.S[bx.at].c, len:L.S[bx.at].len*2};
+  });
+}
+/* box under the sitting girl: thin wireframe from the start, faces fill as the line arrives */
+const MAIN = LINES[0], BW = 22, BH = 32;
+const rf = mk('polygon',{fill:'var(--wh-r)'},lfront._bot);
+const wireHid = mk('path',{fill:'none',stroke:'#fff','stroke-width':1,'stroke-dasharray':'5 4','vector-effect':'non-scaling-stroke',opacity:.45},lback._ghost);
+const wireVis = mk('path',{fill:'none',stroke:'#fff','stroke-width':1.3,'vector-effect':'non-scaling-stroke',opacity:.95},lfront);
+function boxP(x,y,z){ const A = MAIN.topSeg.a, q = proj([x,y,z]); return [A[0]+q[0], A[1]+q[1]]; }
+(() => {
+  const w=BW/2, h=-BH, E=(list)=>list.map(([u,v])=>{const p1=boxP(...u),p2=boxP(...v);return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)}L${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`}).join('');
+  wireVis.setAttribute('d', E([[[-w,0,0],[w,0,0]],[[w,0,0],[w,0,BW]],[[w,0,BW],[-w,0,BW]],[[-w,0,BW],[-w,0,0]],
+    [[-w,0,BW],[-w,h,BW]],[[w,0,BW],[w,h,BW]],[[w,0,0],[w,h,0]],[[-w,h,BW],[w,h,BW]],[[w,h,BW],[w,h,0]]]));
+  wireHid.setAttribute('d', E([[[-w,0,0],[-w,h,0]],[[-w,h,0],[w,h,0]],[[-w,h,0],[-w,h,BW]]]));
+  // the girl sits on the front edge of the top face, hands on the edge, legs over the front face
+  const sitter = document.getElementById('sitter'), IW = 646, HX = 305, HY = 830;
+  const sc = 0.82*BW*AX.x[0]/400, c = boxP(0.02*BW, 0, BW-0.6);
+  sitter.style.left = `calc(var(--u)*${(c[0]-HX*sc).toFixed(2)})`;
+  sitter.style.width = `calc(var(--u)*${(IW*sc).toFixed(2)})`;
+  sitter.style.top = `calc(var(--u)*${(c[1]-HY*sc-BOUND).toFixed(2)})`;
+})();
+
+/* red cross behind girl 1: the beam is line C itself, the crossbar spreads out when the fill reaches it */
+const CL = LINES[2], CROSS = {cx:19.08, y0:94.34, y1:113.3, left:-90, right:57};
+const barShadow = mk('polygon',{fill:'var(--red-r)',transform:'translate(1.3 .9)'},lback._top);
+const bar = mk('polygon',{fill:'var(--red)'},lback._top);
+function drawCross(){
+  const s = CL.crossSeg, c0 = s.c + (CROSS.y0 - s.a[1])/AX.y[1]*-1;
+  const p = Math.max(0, Math.min(1, (CL.D - c0)/16)), e = 1 - Math.pow(1-p, 3);
+  const pts = p<=0 ? '' : [[CROSS.cx-(CROSS.cx-CROSS.left)*e, CROSS.y0],[CROSS.cx+(CROSS.right-CROSS.cx)*e, CROSS.y0],
+    [CROSS.cx+(CROSS.right-CROSS.cx)*e, CROSS.y1],[CROSS.cx-(CROSS.cx-CROSS.left)*e, CROSS.y1]].map(q=>q.map(v=>v.toFixed(2)).join(',')).join(' ');
+  bar.setAttribute('points', pts); barShadow.setAttribute('points', pts);
+}
+
+const f2=v=>v.toFixed(2);
+function quad(s, t){
+  // visible part of segment s for fraction t in [0,1]
+  const ea = t>0 ? s.extA : 0, eb = t>=1 ? s.extB : 0;
+  const L0 = -ea, L1 = s.len*t + eb;
+  const wa = s.w0, wb = s.w0 + (s.w1-s.w0)*t;
+  const ax = s.a[0]+s.pd[0]*L0, ay = s.a[1]+s.pd[1]*L0;
+  const bx = s.a[0]+s.pd[0]*L1, by = s.a[1]+s.pd[1]*L1;
+  const h0=wa/2, h1=wb/2;
+  return `${f2(ax-s.wv[0]*h0)},${f2(ay-s.wv[1]*h0)} ${f2(ax+s.wv[0]*h0)},${f2(ay+s.wv[1]*h0)} ${f2(bx+s.wv[0]*h1)},${f2(by+s.wv[1]*h1)} ${f2(bx-s.wv[0]*h1)},${f2(by-s.wv[1]*h1)}`;
+}
+function draw(L){
+  for (const s of L.S) {
+    const t = Math.max(0, Math.min(1, (L.D - s.c)/s.len));
+    const pts = t>0 ? quad(s,t) : '';
+    if (s._last !== pts) { s.pt.setAttribute('points',pts); s.pb.setAttribute('points',pts); if (s.ps) s.ps.setAttribute('points',pts); s._last = pts; }
+  }
+  for (const g of L.ghosts) {
+    const t = Math.max(0, Math.min(1, (L.D - g.c)/g.len));
+    g.el.setAttribute('stroke-dashoffset', 1-t); g.el.setAttribute('opacity', (.55*t).toFixed(3));
+  }
+}
+function drawCube(){
+  const s = MAIN.cubeSeg;
+  const t = Math.max(0, Math.min(1, (MAIN.D - s.c)/s.len));
+  if (t<=0) { rf.setAttribute('points',''); return; }
+  const w=BW/2, h=-BH*t;
+  rf.setAttribute('points',[boxP(w,0,0),boxP(w,0,BW),boxP(w,h,BW),boxP(w,h,0)].map(p=>p.map(f2).join(',')).join(' '));
+}
+
+/* ---------- scroll -> drawn length ---------- */
+const DEBUG = /full/.test(location.search);
+function targetD(L, sy, vh){
+  let D=0, M=-1e9;
+  for (const s of L.S) {
+    const T = (sy + vh*(s.o.k || L.k))/upx;
+    const ys=s.a[1], ye=s.b[1];
+    if (Math.max(M,ye) <= T) { D += s.len; M = Math.max(M,ye); continue; }
+    if (ye > ys && T > ys) D += s.len * Math.min(1,(T-ys)/(ye-ys));
+    break;
+  }
+  return D;
+}
+let upx = 1, ticking = false;
+function measure(){ upx = lback.getBoundingClientRect().width/100; }
+function frame(){
+  ticking = false;
+  const vh = innerHeight, sy = scrollY;
+  let moving = false;
+  for (const L of LINES) {
+    const tgt = DEBUG ? L.total : targetD(L, sy, vh);
+    const d = tgt - L.D;
+    if (Math.abs(d) > .02) { L.D += d * (DEBUG?1:.11); moving = true; } else L.D = tgt;
+    draw(L);
+  }
+  drawCube();
+  drawCross();
+  parallax(sy, vh);
+  wall(sy, vh);
+  if (moving) req();
+}
+function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame);} }
+
+/* ---------- section 1 girls ---------- */
+const pars = [...document.querySelectorAll('.girl[data-par]')];
+function parallax(sy, vh){
+  for (const g of pars) {
+    const r = g.parentNode.getBoundingClientRect();
+    const mid = g.offsetTop + g.offsetHeight/2 + (r.top + sy);
+    const off = (sy + vh/2 - mid) * parseFloat(g.dataset.par);
+    g.style.transform = `translate3d(0,${off.toFixed(1)}px,0)`;
+    if (g.classList.contains('reveal')) { const b = g.getBoundingClientRect(); if (b.top < vh*.8 && b.bottom > 0) g.classList.add('in'); }
+  }
+}
+if (DEBUG) document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in'));
+// floor shadow under the standing girl, skewed into the floor plane
+(() => {
+  const sh = document.getElementById('g4sh');
+  sh.style.cssText += ';left:18%;width:62%;bottom:-1.5%;height:7%;transform:skewX(-35deg)';
+})();
+
+/* ---------- wall of girls ---------- */
+const ring = document.getElementById('ring');
+const WALL = [
+  // back row: full figures [src, angle deg, height vh, mirror, lift vh]
+  ['ref4mint', -40, 66, 0, 16], ['ref7', -27, 60, 1, 18], ['ref4', -13, 70, 1, 17], ['ref2', 0, 58, 0, 19], ['ref7', 13, 60, 0, 18], ['ref4', 27, 68, 0, 16], ['ref4mint', 41, 66, 1, 16],
+  // front row: busts, cropped by the bottom edge
+  ['ref5pink', -33, 46, 1, -7, 1], ['ref1', -12, 42, 0, -6, 1], ['ref3', 9, 46, 0, -8, 1], ['ref5', 31, 46, 0, -7, 1]
+];
+const AR = {ref1:1186/1300, ref1pink:1186/1300, ref2:979/1329, ref3:1681/1300, ref4:949/1289, ref4mint:949/1289, ref5:1043/1254, ref5pink:1043/1254, ref7:385/522};
+const wgs = WALL.map(([src,ang,h,mir,lift,bust],i) => {
+  const el = document.createElement('div');
+  el.className = 'wg' + (mir?' mir':'') + (bust?' bust':'');
+  el.innerHTML = `<div class="inner"><img src="assets/${src}.webp" alt=""></div>`;
+  el._ang = ang; el._h = h; el._lift = lift; el._bust = bust; el._ar = AR[src]; el._i = i;
+  ring.appendChild(el);
+  return el;
+});
+function layoutWall(){
+  const vh = innerHeight, vw = innerWidth;
+  const wide = vw > vh;
+  const R = wide ? Math.max(vw*0.95, vh*1.5) : vw*2.1;
+  const k = wide ? Math.min(1, vw/vh*0.75) : 0.62;
+  for (const el of wgs) {
+    const h = el._h*vh/100 * k;
+    const w = h*el._ar;
+    el.style.width = w+'px';
+    el.style.left = (-w/2)+'px';
+    el.style.bottom = (el._lift*vh/100)+'px';
+    const r = el._bust ? R*0.74 : R;
+    el._base = `rotateY(${el._ang}deg) translateZ(${-r}px)`;
+    el._r = r;
+    el.style.zIndex = el._bust ? 20 - Math.abs(el._ang)/10|0 : 10 - Math.abs(el._ang)/10|0;
+  }
+}
+let mx = 0;
+addEventListener('pointermove', e => { mx = e.clientX/innerWidth - .5; req(); }, {passive:true});
+const wb = document.getElementById('wallblock');
+function wall(sy, vh){
+  const r = wb.getBoundingClientRect();
+  const p = Math.max(0, Math.min(1, -r.top / (r.height - vh)));
+  const R = parseFloat(wgs[0]._r);
+  const rot = (p-.5)*-16 + mx*6;
+  ring.style.transform = `translateZ(${R*0.82 + p*R*0.08}px) rotateY(${rot}deg)`;
+  const vis = r.top < vh*0.6 || DEBUG;
+  wgs.forEach(el => {
+    el.style.transform = el._base;
+    if (vis && !el._t) el._t = setTimeout(() => el.classList.add('in'), (el._bust?500:0) + Math.abs(el._ang)*14);
+  });
+}
+
+addEventListener('scroll', req, {passive:true});
+addEventListener('resize', () => { measure(); layoutWall(); req(); });
+measure(); layoutWall();
+// intro: lines draw from zero on load
+req();
+})();
+</script>
