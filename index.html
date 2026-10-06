@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pavel · Video Editor</title>
-<meta name="description" content="Pavel. Video editor based in the Philippines.">
+<meta name="description" content="Pavel, 18. Video editor from Vladivostok, based in the Philippines.">
 <meta name="theme-color" content="#e3132b">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alaskaoneheart.site/">
 <meta property="og:title" content="Pavel · Video Editor">
-<meta property="og:description" content="Video editor based in the Philippines.">
+<meta property="og:description" content="Video editor from Vladivostok, based in the Philippines.">
 <meta property="og:image" content="https://alaskaoneheart.site/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -57,7 +57,11 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 /* left-anchored hero text never leaves the screen on narrow phones */
 .edge{left:max(calc(var(--u)*5.6), calc(var(--u)*50 - 50vw + 16px))}
 .role{position:absolute;top:calc(var(--u)*37.4);font-family:Anton,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
-.facts{position:absolute;top:calc(var(--u)*42.8);display:grid;grid-template-columns:auto auto;column-gap:1.6em;row-gap:.6em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+/* facts, then the scroll hint, stacked so a taller list on phones pushes the hint down */
+.info{position:absolute;top:calc(var(--u)*42.8);display:flex;flex-direction:column;align-items:flex-start;gap:calc(var(--u)*1.6)}
+.info .tag,.info .bar{position:static}
+.info .bar{width:calc(var(--u)*12);margin-top:calc(var(--u)*-.6)}
+.facts{display:grid;grid-template-columns:auto auto;column-gap:1.6em;row-gap:.6em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .facts dt{color:var(--mute)}
 .facts dd{font-weight:700;color:var(--ink)}
 .facts b{color:var(--red)}
@@ -65,13 +69,13 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 /* phones: the layout is wider than the screen, so labels sit over the line drawings; give them a paper backing */
 @media (max-width:700px){
   .tag.deco{display:none}
-  .role,.facts,.hero .tag.edge{background:var(--bg);padding:.25em .45em;margin-left:-.45em}
+  .role,.facts,.info .tag,.hero>.tag.edge{background:var(--bg);padding:.25em .45em;margin-left:-.45em}
 }
 /* --- girls --- */
 .girl{position:absolute;z-index:2;will-change:transform}
 .girl img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .girl.echo img{filter:drop-shadow(calc(var(--u)*1.1) calc(var(--u)*.6) 0 var(--red))}
-.girl.fade img{-webkit-mask-image:linear-gradient(#000 72%,transparent 97%);mask-image:linear-gradient(#000 72%,transparent 97%)}
+.girl.fade img{-webkit-mask-image:linear-gradient(#000 84%,transparent 99%);mask-image:linear-gradient(#000 84%,transparent 99%)}
 .girl .shadow{position:absolute;z-index:-1;background:rgba(143,10,24,.16);border-radius:50%}
 .reveal{clip-path:inset(0 0 100% 0);transition:clip-path 1.1s cubic-bezier(.7,0,.2,1)}
 .reveal.in{clip-path:inset(-20% -20% -20% -20%)}
@@ -85,42 +89,54 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 #s2 .tag b{color:#fff;background:var(--ink);padding:0 .4em}
 #s2 .spark{color:#fff}
 #s2 .bar{background:#fff}
-/* wall */
-#wallblock{height:240vh;position:relative}
-#stage{position:sticky;top:0;height:100vh;overflow:hidden;perspective:1100px;perspective-origin:50% 38%}
-#stage .floor{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 30%,100% 30%,100% 100%,0 100%)}
-#stage .backword{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em}
-#ring{position:absolute;left:50%;top:0;width:0;height:100%;transform-style:preserve-3d}
-.wg{position:absolute;bottom:0;transform-style:preserve-3d;transform-origin:50% 100%}
+/* wall: a normal-height block; the girls only move with the mouse or the phone's tilt */
+#wallblock{position:relative}
+#stage{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden}
+#stage .floor{position:absolute;left:0;right:0;bottom:-8%;height:42%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 24.3%,100% 24.3%,100% 100%,0 100%);will-change:transform}
+#stage .backword{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
+#ring{position:absolute;inset:0;z-index:1}
+.wg{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform}
 .wg .inner{transform-origin:50% 100%;transition:transform 1s cubic-bezier(.2,.9,.25,1),opacity .6s;opacity:0;transform:translateY(40%)}
 .wg.in .inner{opacity:1;transform:none}
 .wg img{display:block;width:100%;height:auto;filter:drop-shadow(-10px 6px 0 rgba(20,0,4,.28))}
 .wg.mir img{transform:scaleX(-1);filter:drop-shadow(10px 6px 0 rgba(20,0,4,.28))}
 .wg.bust img{-webkit-mask-image:linear-gradient(#000 78%,transparent 99%);mask-image:linear-gradient(#000 78%,transparent 99%)}
-.wg.cutedge img{-webkit-mask-image:linear-gradient(transparent 0,#000 10%,#000 75%,transparent 99%),linear-gradient(90deg,transparent 0,#000 9%);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent 0,#000 10%,#000 75%,transparent 99%),linear-gradient(90deg,transparent 0,#000 9%);mask-composite:intersect}
+#tilt{pointer-events:none;background:var(--ink);padding:.6em .9em}
+#s2 #tilt b{background:var(--red)}
 #stage .hud{position:absolute;inset:0;pointer-events:none;z-index:50}
 footer{position:relative;background:var(--ink);color:#fff;padding:calc(var(--u)*2.2) max(calc(var(--u)*4),16px);display:flex;flex-wrap:wrap;gap:1em;justify-content:space-between;font-size:max(calc(var(--u)*.85),9px);letter-spacing:.18em;text-transform:uppercase}
 footer b{color:var(--red)}
-/* now playing (Spotify via Discord presence) */
-.np{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:12px;width:min(320px,calc(100vw - 32px));padding:10px 14px 10px 10px;background:var(--ink);color:#fff;text-decoration:none;box-shadow:5px 5px 0 var(--red);font-family:'JetBrains Mono',ui-monospace,monospace;transition:transform .2s,box-shadow .2s}
-.np[href]:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
-.np:focus-visible{outline:2px solid var(--red);outline-offset:3px}
-.np-art{flex:none;position:relative;width:56px;height:56px;background:var(--red);display:grid;place-items:center;overflow:hidden;color:#fff}
+/* now playing (Spotify via Discord presence): a plate under the gun girl that hides where she fades out */
+.np-wrap{--npw:clamp(272px,calc(var(--u)*32.5),640px);--art:clamp(46px,calc(var(--u)*4.6),80px);--pad:clamp(8px,calc(var(--u)*.8),15px);--lab:clamp(9px,calc(var(--u)*.62),11px);
+  position:absolute;z-index:4;width:var(--npw);pointer-events:auto;will-change:transform;
+  top:calc(var(--u)*170.48);left:min(calc(var(--u)*72.25 - var(--npw)/2), calc(var(--u)*50 + 50vw - 16px - var(--npw)))}
+.np{position:relative;display:flex;align-items:center;gap:calc(var(--pad)*1.1);min-height:calc(var(--u)*6.4);padding:var(--pad) calc(var(--pad)*1.3) var(--pad) var(--pad);
+  background:var(--ink);color:#fff;box-shadow:5px 5px 0 var(--red);font-family:'JetBrains Mono',ui-monospace,monospace;
+  opacity:0;transform:translateY(14px);transition:opacity .7s ease .35s,transform .7s cubic-bezier(.2,.9,.25,1) .35s,translate .2s,box-shadow .2s}
+.np.in{opacity:1;transform:none}
+.np.in:has(.np-song[href]:hover){translate:-2px -2px;box-shadow:7px 7px 0 var(--red)}
+.np-art{flex:none;position:relative;width:var(--art);height:var(--art);background:var(--red);display:grid;place-items:center;overflow:hidden;color:#fff}
 .np-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%}
-.np-art svg{width:24px;height:24px}
+.np-art svg{width:42%;height:42%}
 .np-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.np-label{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.np-top{display:flex;align-items:center;gap:8px;min-width:0}
+.np-label{display:flex;align-items:center;gap:6px;min-width:0;font-size:var(--lab);letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);white-space:nowrap}
 .np-dot{width:6px;height:6px;border-radius:50%;background:#6d6468;flex:none}
 .np.playing .np-dot{background:var(--red);animation:np-pulse 1.4s ease-in-out infinite}
-.np-song{font-family:Anton,Impact,sans-serif;font-size:17px;line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.np-artist{font-size:11px;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.np-prog{display:none;align-items:center;gap:8px;margin-top:3px;font-size:9px;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}
+/* small button to the Spotify profile, sits above the card-wide track link */
+.np-prof{position:relative;z-index:1;flex:none;margin-left:auto;padding:.45em .65em .4em;border:1px solid rgba(255,255,255,.32);color:#fff;text-decoration:none;font-size:var(--lab);line-height:1;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;transition:background .2s,border-color .2s}
+.np-prof:hover,.np-prof:focus-visible{background:var(--red);border-color:var(--red);outline:none}
+.np-song{display:block;color:inherit;text-decoration:none;font-family:Anton,Impact,sans-serif;font-size:clamp(15px,calc(var(--u)*1.3),23px);line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-song[href]::after{content:"";position:absolute;inset:0}
+.np-song:focus-visible{outline:none}
+.np:has(.np-song:focus-visible){outline:2px solid var(--red);outline-offset:3px}
+.np-artist{font-size:clamp(11px,calc(var(--u)*.8),14px);color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-prog{display:none;align-items:center;gap:8px;margin-top:3px;font-size:var(--lab);color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}
 .np.has-time .np-prog{display:flex}
 .np-bar{flex:1;height:3px;background:rgba(255,255,255,.18);position:relative}
 .np-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red)}
 @keyframes np-pulse{50%{opacity:.3}}
-@media (max-width:480px){.np{gap:10px;padding:8px 12px 8px 8px}.np-art{width:46px;height:46px}.np-song{font-size:15px}}
-@media (prefers-reduced-motion: reduce){.reveal,.wg .inner{transition:none}.np-dot{animation:none!important}}
+@media (prefers-reduced-motion: reduce){.reveal,.wg .inner,.np{transition:none}.np-dot{animation:none!important}}
 </style>
 </head>
 <body>
@@ -134,12 +150,16 @@ footer b{color:var(--red)}
     <div class="title"><span>PAVEL</span><span class="ghost">PAVEL</span></div>
     <div class="tag edge" style="top:calc(var(--u)*3)">[ <b>✕✕</b> ] alaskaoneheart.site</div>
     <div class="role edge">Video editor</div>
-    <dl class="facts edge">
-      <dt>Based in</dt><dd>Philippines</dd>
-      <dt>Local time</dt><dd><span id="ptime">--:--</span> <b>UTC+8</b></dd>
-    </dl>
-    <div class="tag edge" style="top:calc(var(--u)*50.5)">scroll <b>↓</b></div>
-    <div class="bar edge" style="top:calc(var(--u)*52.5);width:calc(var(--u)*12)"></div>
+    <div class="info edge">
+      <dl class="facts">
+        <dt>Age</dt><dd>18</dd>
+        <dt>Hometown</dt><dd>Vladivostok</dd>
+        <dt>Based in</dt><dd>Philippines</dd>
+        <dt>Local time</dt><dd><span id="ptime">--:--</span> <b>UTC+8</b></dd>
+      </dl>
+      <div class="tag">scroll <b>↓</b></div>
+      <div class="bar"></div>
+    </div>
     <div class="tag deco" style="left:calc(var(--u)*82);top:calc(var(--u)*3)">vol. <b>01</b></div>
     <div class="spark" style="left:calc(var(--u)*52);top:calc(var(--u)*6)"></div>
     <div class="spark" style="left:calc(var(--u)*47);top:calc(var(--u)*30);transform:scale(.6)"></div>
@@ -160,6 +180,21 @@ footer b{color:var(--red)}
     </div>
     <div class="girl echo fade reveal" id="g3" data-par="-.05" style="left:calc(var(--u)*49);top:calc(var(--u)*138);width:calc(var(--u)*50)">
       <img src="assets/ref3.webp" alt="">
+    </div>
+    <!-- now playing on Spotify, read from Discord presence (script at the bottom) -->
+    <div class="np-wrap" id="npw" hidden>
+      <div class="np" id="np">
+        <span class="np-art"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2 20 3v12.6a2.6 2.6 0 1 1-2-2.5V7.4l-8 1.5v8.8a2.6 2.6 0 1 1-2-2.5z" fill="currentColor"/></svg><img id="np-img" alt="" hidden></span>
+        <span class="np-body">
+          <span class="np-top">
+            <span class="np-label"><i class="np-dot"></i><span id="np-state">Spotify</span></span>
+            <a class="np-prof" href="https://open.spotify.com/user/31dmdp75lwb7jyme324mqm5jiwhq" target="_blank" rel="noopener" title="Pavel on Spotify">Profile ↗</a>
+          </span>
+          <a class="np-song" id="np-song" target="_blank" rel="noopener">Nothing playing</a>
+          <span class="np-artist" id="np-artist"></span>
+          <span class="np-prog"><span id="np-el">0:00</span><span class="np-bar"><span class="np-fill" id="np-fill"></span></span><span id="np-tot">0:00</span></span>
+        </span>
+      </div>
     </div>
   </div>
 </section>
@@ -184,22 +219,13 @@ footer b{color:var(--red)}
       <div class="hud">
         <div class="tag" style="left:4vw;top:4vh">[ <b>03</b> ] — the wall</div>
         <div class="tag" style="right:4vw;top:4vh">look <b>at me</b></div>
+        <div class="tag" id="tilt" style="left:50%;bottom:3vh;transform:translateX(-50%)" hidden>tap, then <b>tilt</b> your phone</div>
       </div>
     </div>
   </div>
   <footer><span>© 2026 <b>Pavel</b></span><span>Video editor — Philippines</span></footer>
 </section>
 </div>
-
-<a class="np" id="np" target="_blank" rel="noopener" hidden>
-  <span class="np-art"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2 20 3v12.6a2.6 2.6 0 1 1-2-2.5V7.4l-8 1.5v8.8a2.6 2.6 0 1 1-2-2.5z" fill="currentColor"/></svg><img id="np-img" alt="" hidden></span>
-  <span class="np-body">
-    <span class="np-label"><i class="np-dot"></i><span id="np-state">Spotify</span></span>
-    <span class="np-song" id="np-song"></span>
-    <span class="np-artist" id="np-artist"></span>
-    <span class="np-prog"><span id="np-el">0:00</span><span class="np-bar"><span class="np-fill" id="np-fill"></span></span><span id="np-tot">0:00</span></span>
-  </span>
-</a>
 
 <script>
 (() => {
@@ -398,78 +424,132 @@ function frame(){
   drawCube();
   drawCross();
   parallax(sy, vh);
-  wall(sy, vh);
+  if (wall(sy, vh)) moving = true;
   if (moving) req();
 }
 function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame);} }
 
 /* ---------- section 1 girls ---------- */
 const pars = [...document.querySelectorAll('.girl[data-par]')];
+// the now-playing plate rides along with the gun girl so it keeps covering her fade
+const g3 = document.getElementById('g3'), npw = document.getElementById('npw'), np = document.getElementById('np');
 function parallax(sy, vh){
   for (const g of pars) {
     const r = g.parentNode.getBoundingClientRect();
     const mid = g.offsetTop + g.offsetHeight/2 + (r.top + sy);
     const off = (sy + vh/2 - mid) * parseFloat(g.dataset.par);
     g.style.transform = `translate3d(0,${off.toFixed(1)}px,0)`;
-    if (g.classList.contains('reveal')) { const b = g.getBoundingClientRect(); if (b.top < vh*.8 && b.bottom > 0) g.classList.add('in'); }
+    if (g === g3) npw.style.transform = g.style.transform;
+    if (g.classList.contains('reveal')) { const b = g.getBoundingClientRect(); if (b.top < vh*.8 && b.bottom > 0) { g.classList.add('in'); if (g === g3) np.classList.add('in'); } }
   }
 }
-if (DEBUG) document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in'));
+if (DEBUG) { document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in')); np.classList.add('in'); }
 // floor shadow under the standing girl, skewed into the floor plane
 (() => {
   const sh = document.getElementById('g4sh');
   sh.style.cssText += ';left:18%;width:62%;bottom:-1.5%;height:7%;transform:skewX(-35deg)';
 })();
 
-/* ---------- wall of girls ---------- */
-const ring = document.getElementById('ring');
+/* ---------- wall of girls ----------
+   A curved wall seen by a camera that drifts with the mouse (desktop) or the phone's tilt.
+   Cards are projected here instead of in a shared CSS 3D scene, so neighbours never slice through each other;
+   each card keeps a slight turn toward the middle with its own perspective. */
+const stage = document.getElementById('stage'), ring = document.getElementById('ring');
+const backword = stage.querySelector('.backword'), floor = stage.querySelector('.floor');
 const WALL = [
-  // back row: full figures [src, angle deg, height vh, mirror, lift vh]
+  // back row: full figures [src, angle deg, height %, mirror, lift %]
   ['ref4mint', -40, 66, 0, 16], ['ref7', -27, 60, 1, 18], ['ref4', -13, 70, 1, 17], ['ref2', 0, 58, 0, 19], ['ref7', 13, 60, 0, 18], ['ref4', 27, 68, 0, 16], ['ref4mint', 41, 66, 1, 16],
-  // front row: busts, cropped by the bottom edge
-  ['ref5pink', -33, 46, 1, -7, 1], ['ref1', -12, 42, 0, -6, 1], ['ref3', 9, 46, 0, -8, 1], ['ref5', 31, 46, 0, -7, 1]
+  // front row: busts, closer to the camera and cropped by the bottom edge [src, angle, on-screen height %, mirror, on-screen bottom ×H]
+  ['ref5pink', -33, 70, 1, 1.33, 1], ['ref1', -12, 55, 0, 1.19, 1], ['ref3', 9, 60, 0, 1.22, 1], ['ref5', 31, 70, 0, 1.33, 1]
 ];
 const AR = {ref1:1186/1300, ref1pink:1186/1300, ref2:979/1329, ref3:1681/1300, ref4:949/1289, ref4mint:949/1289, ref5:1043/1254, ref5pink:1043/1254, ref7:385/522};
-const wgs = WALL.map(([src,ang,h,mir,lift,bust],i) => {
+const wgs = WALL.map(([src,ang,h,mir,lift,bust]) => {
   const el = document.createElement('div');
   el.className = 'wg' + (mir?' mir':'') + (bust?' bust':'');
   el.innerHTML = `<div class="inner"><img src="assets/${src}.webp" alt=""></div>`;
-  el._ang = ang; el._h = h; el._lift = lift; el._bust = bust; el._ar = AR[src]; el._i = i;
+  Object.assign(el, {_ang:ang, _hp:h, _lift:lift, _bust:bust, _ar:AR[src]});
   ring.appendChild(el);
   return el;
 });
+let AMP = 0, floorF = 0, SH = 0;
 function layoutWall(){
-  const vh = innerHeight, vw = innerWidth;
-  const wide = vw > vh;
-  const R = wide ? Math.max(vw*0.95, vh*1.5) : vw*2.1;
-  const k = wide ? Math.min(1, vw/vh*0.75) : 0.62;
+  const W = stage.clientWidth, H = SH = stage.clientHeight, wide = W > H;
+  const R = wide ? Math.max(W*.95, H*1.5) : W*2.1;          // radius of the wall
+  const k = wide ? Math.min(1, W/H*.75) : .62;               // card height scale
+  const P = Math.max(W, H)*.8;                                // camera distance
+  const VX = W/2, VY = H*.38;                                  // vanishing point
   for (const el of wgs) {
-    const h = el._h*vh/100 * k;
-    const w = h*el._ar;
+    const a = el._ang*Math.PI/180, r = el._bust ? R*.62 : R;
+    const z = R*.86 - r*Math.cos(a);                           // + toward the viewer
+    const s = P/(P - z), h = el._hp*H/100*k/(el._bust ? s : 1), w = h*el._ar;   // busts are sized as seen
     el.style.width = w+'px';
-    el.style.left = (-w/2)+'px';
-    el.style.bottom = (el._lift*vh/100)+'px';
-    const r = el._bust ? R*0.74 : R;
-    el._base = `rotateY(${el._ang}deg) translateZ(${-r}px)`;
-    el._r = r;
-    el.style.zIndex = el._bust ? 20 - Math.abs(el._ang)/10|0 : 10 - Math.abs(el._ang)/10|0;
+    el._s = s; el._w = w; el._hh = h; el._P = P;
+    el._X = VX - r*Math.sin(a)*s;                              // bottom centre on screen, camera at rest
+    el._Y = el._bust ? (el._lift - (1 - k)*.29)*H : VY + (H - el._lift*H/100 - VY)*s;   // smaller busts on phones sit higher
+    el._f = 1 - s;                                             // screen shift per px of camera move: far +, near -
+    el.style.zIndex = Math.round(z + 1000);
   }
+  const back = wgs.find(e => !e._bust && e._ang === 0);
+  floorF = back._f;
+  // camera travel: about 4% of the width between the front busts and the back row on desktop, more on phones
+  const near = Math.min(...wgs.filter(e => e._bust).map(e => e._f));
+  AMP = (wide ? W*.04 : W*.09) / (back._f - near);
+  placeWall();
 }
-let mx = 0;
-addEventListener('pointermove', e => { mx = e.clientX/innerWidth - .5; req(); }, {passive:true});
-const wb = document.getElementById('wallblock');
+let camX = 0, camY = 0, aimX = 0, aimY = 0, wallSeen = false;
+function placeWall(){
+  const dx = camX*AMP, dy = camY*AMP*.6;
+  for (const el of wgs) {
+    const X = el._X + dx*el._f, Y = el._Y + dy*el._f;
+    el.style.transform = `translate3d(${(X - el._w/2).toFixed(1)}px,${(Y - el._hh).toFixed(1)}px,0) scale(${el._s.toFixed(4)}) perspective(${el._P|0}px) rotateY(${(el._ang*.6).toFixed(1)}deg)`;
+  }
+  backword.style.transform = `translate3d(calc(-50% + ${(dx*.5).toFixed(1)}px),${(dy*.5).toFixed(1)}px,0) skewX(-9deg)`;
+  floor.style.transform = `translate3d(0,${(dy*floorF).toFixed(1)}px,0)`;
+}
 function wall(sy, vh){
-  const r = wb.getBoundingClientRect();
-  const p = Math.max(0, Math.min(1, -r.top / (r.height - vh)));
-  const R = parseFloat(wgs[0]._r);
-  const rot = (p-.5)*-16 + mx*6;
-  ring.style.transform = `translateZ(${R*0.82 + p*R*0.08}px) rotateY(${rot}deg)`;
-  const vis = r.top < vh*0.6 || DEBUG;
-  wgs.forEach(el => {
-    el.style.transform = el._base;
-    if (vis && !el._t) el._t = setTimeout(() => el.classList.add('in'), (el._bust?500:0) + Math.abs(el._ang)*14);
-  });
+  const r = stage.getBoundingClientRect();
+  if (!wallSeen && (r.top < vh*.6 || DEBUG)) {
+    wallSeen = true;
+    wgs.forEach(el => setTimeout(() => el.classList.add('in'), (el._bust?500:0) + Math.abs(el._ang)*14));
+  }
+  if (r.bottom < 0 || r.top > vh) return false;
+  const ex = aimX - camX, ey = aimY - camY;
+  if (Math.abs(ex) < .001 && Math.abs(ey) < .001) return false;
+  camX += ex*.08; camY += ey*.08;
+  placeWall();
+  return true;
 }
+// input: the mouse on desktop; on phones the tilt, measured against a slowly drifting rest pose
+const still = matchMedia('(prefers-reduced-motion: reduce)');
+addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || still.matches) return;
+  aimX = (e.clientX/innerWidth - .5)*2; aimY = (e.clientY/innerHeight - .5)*2; req();
+}, {passive:true});
+document.documentElement.addEventListener('mouseleave', () => { aimX = aimY = 0; req(); });
+const clamp1 = v => Math.max(-1, Math.min(1, v));
+let rest = null;
+function onTilt(e){
+  if (e.beta == null || e.gamma == null || still.matches) return;
+  const ang = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+  let x = e.gamma, y = e.beta;                                 // portrait: left/right, toward/away
+  if (ang === 90) { x = e.beta; y = -e.gamma; } else if (ang === -90 || ang === 270) { x = -e.beta; y = e.gamma; } else if (ang === 180) { x = -e.gamma; y = -e.beta; }
+  if (!rest) rest = {x, y};
+  rest.x += (x - rest.x)*.006; rest.y += (y - rest.y)*.006;
+  aimX = clamp1((x - rest.x)/16); aimY = clamp1((y - rest.y)/16);
+  req();
+}
+const DOE = window.DeviceOrientationEvent;
+if (DOE && typeof DOE.requestPermission === 'function') {
+  // iOS asks first, and only from a tap
+  const hint = document.getElementById('tilt');
+  hint.hidden = false;
+  const ask = () => {
+    stage.removeEventListener('click', ask);
+    hint.hidden = true;
+    DOE.requestPermission().then(r => { if (r === 'granted') addEventListener('deviceorientation', onTilt, {passive:true}); }).catch(() => {});
+  };
+  stage.addEventListener('click', ask);
+} else if (DOE) addEventListener('deviceorientation', onTilt, {passive:true});
 
 addEventListener('scroll', req, {passive:true});
 addEventListener('resize', () => { measure(); layoutWall(); req(); });
@@ -491,12 +571,12 @@ req();
 </script>
 <script>
 /* Now playing: Spotify activity read from Discord presence through Lanyard (https://github.com/Phineas/lanyard).
-   Setup: join discord.gg/lanyard, connect Spotify in Discord, put your Discord user ID below. Empty ID = widget off. */
+   Needs: membership in discord.gg/lanyard, Spotify connected in Discord, the Discord user ID below. Empty ID = widget off. */
 (() => {
-  const DISCORD_ID = '';
+  const DISCORD_ID = '1077196329031323809';
   const WS_URL = 'wss://api.lanyard.rest/socket', REST_URL = 'https://api.lanyard.rest/v1/users/';
   const $ = id => document.getElementById(id);
-  const np = $('np'), img = $('np-img'), song = $('np-song'), artist = $('np-artist'), state = $('np-state'),
+  const wrap = $('npw'), np = $('np'), img = $('np-img'), song = $('np-song'), artist = $('np-artist'), state = $('np-state'),
         fill = $('np-fill'), elapsed = $('np-el'), total = $('np-tot');
   const STATUS = { online: 'online', idle: 'away', dnd: 'do not disturb', offline: 'offline' };
   const fmt = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
@@ -510,27 +590,27 @@ req();
     total.textContent = fmt(len);
   }
 
+  // p: Lanyard presence, or null while nothing is known yet
   function render(p) {
-    const s = p.listening_to_spotify && p.spotify;
+    const s = p && p.listening_to_spotify && p.spotify;
     clearInterval(timer); ts = null;
-    np.hidden = false;
     np.classList.toggle('playing', !!s);
     if (s) {
-      state.textContent = 'Listening on Spotify';
+      state.textContent = 'Now playing';
       song.textContent = s.song || 'Unknown track';
       artist.textContent = (s.artist || '').replace(/;\s*/g, ', ');
       img.hidden = !s.album_art_url;
       if (s.album_art_url && img.getAttribute('src') !== s.album_art_url) img.src = s.album_art_url;
-      if (s.track_id) np.href = 'https://open.spotify.com/track/' + s.track_id; else np.removeAttribute('href');
-      np.setAttribute('aria-label', 'Now playing on Spotify: ' + song.textContent + ' by ' + artist.textContent);
+      if (s.track_id) { song.href = 'https://open.spotify.com/track/' + s.track_id; song.setAttribute('aria-label', 'Now playing on Spotify: ' + song.textContent + ' by ' + artist.textContent); }
+      else { song.removeAttribute('href'); song.removeAttribute('aria-label'); }
       if (s.timestamps && s.timestamps.start && s.timestamps.end) { ts = s.timestamps; tick(); timer = setInterval(tick, 1000); }
     } else {
       state.textContent = 'Spotify';
       song.textContent = 'Nothing playing';
-      artist.textContent = 'Discord: ' + (STATUS[p.discord_status] || 'offline');
+      artist.textContent = p && p.discord_status ? 'Discord: ' + (STATUS[p.discord_status] || 'offline') : '';
       img.hidden = true;
-      np.removeAttribute('href');
-      np.removeAttribute('aria-label');
+      song.removeAttribute('href');
+      song.removeAttribute('aria-label');
     }
     np.classList.toggle('has-time', !!ts);
   }
@@ -541,7 +621,7 @@ req();
       const r = await fetch(REST_URL + DISCORD_ID, { cache: 'no-store' });
       const j = await r.json();
       if (j && j.success && j.data) { if (!live) render(j.data); }
-      else if (j && j.success === false) { stopped = true; np.hidden = true; console.warn('Lanyard:', j.error && j.error.message); }
+      else if (j && j.success === false) { stopped = true; console.warn('Lanyard:', j.error && j.error.message); }
     } catch (e) { /* offline or blocked: keep the last state */ }
   }
   function connect() {
@@ -564,8 +644,9 @@ req();
 
   if (location.hash === '#demo') {
     const now = Date.now();
+    wrap.hidden = false;
     render({ discord_status: 'online', listening_to_spotify: true, spotify: { song: 'Demo track', artist: 'Artist; Featured artist', album_art_url: 'assets/sit.webp', track_id: '', timestamps: { start: now - 42000, end: now + 173000 } } });
-  } else if (DISCORD_ID) { poll(); connect(); }
+  } else if (DISCORD_ID) { wrap.hidden = false; render(null); poll(); connect(); }
 })();
 </script>
 </body>
