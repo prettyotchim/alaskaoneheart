@@ -91,9 +91,12 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 /* wall: a normal-height block; the girls only move with the mouse or the phone's tilt */
 #wallblock{position:relative}
 #stage{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden}
-@media (max-aspect-ratio:4/5){#stage{height:min(100svh,150vw);min-height:0}#stage .backword{top:9%}}
+#scene{position:absolute;inset:0}
+/* phones: a shorter window onto the same scene, cut from the top so the girls keep their size */
+@media (max-aspect-ratio:4/5){#stage{height:min(100svh,128vw);min-height:0}#scene{top:-22vw}}
 #stage .floor{position:absolute;left:0;right:0;bottom:-8%;height:42%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 24.3%,100% 24.3%,100% 100%,0 100%);will-change:transform}
 #stage .backword{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
+@media (max-aspect-ratio:4/5){#stage .backword{top:28%}}   /* phones: lower, behind the back row's heads */
 #ring{position:absolute;inset:0;z-index:1}
 .wg{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform}
 .wg .inner{transform-origin:50% 100%;transition:transform 1s cubic-bezier(.2,.9,.25,1),opacity .6s;opacity:0;transform:translateY(40%)}
@@ -213,9 +216,11 @@ footer b{color:var(--red)}
   </div>
   <div id="wallblock">
     <div id="stage">
-      <div class="backword">GIRLS</div>
-      <div class="floor"></div>
-      <div id="ring"></div>
+      <div id="scene">
+        <div class="backword">GIRLS</div>
+        <div class="floor"></div>
+        <div id="ring"></div>
+      </div>
       <div class="hud">
         <div class="tag" style="left:4vw;top:4vh">[ <b>03</b> ] — the wall</div>
         <div class="tag" style="right:4vw;top:4vh">look <b>at me</b></div>
@@ -466,7 +471,7 @@ if (DEBUG) { document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in
    A curved wall seen by a camera that drifts with the mouse (desktop) or the phone's tilt.
    Cards are projected here instead of in a shared CSS 3D scene, so neighbours never slice through each other;
    each card keeps a slight turn toward the middle with its own perspective. */
-const stage = document.getElementById('stage'), ring = document.getElementById('ring');
+const stage = document.getElementById('stage'), scene = document.getElementById('scene'), ring = document.getElementById('ring');
 const backword = stage.querySelector('.backword'), floor = stage.querySelector('.floor');
 const WALL = [
   // back row: full figures [src, angle deg, height %, mirror, lift %]
@@ -483,9 +488,9 @@ const wgs = WALL.map(([src,ang,h,mir,lift,bust]) => {
   ring.appendChild(el);
   return el;
 });
-let AMP = 0, floorF = 0, SH = 0;
+let AMP = 0, floorF = 0;
 function layoutWall(){
-  const W = stage.clientWidth, H = SH = stage.clientHeight, wide = W > H;
+  const W = scene.clientWidth, H = scene.clientHeight, wide = W > H;
   const R = wide ? Math.max(W*.95, H*1.5) : W*2.1;          // radius of the wall
   const k = wide ? Math.min(1, W/H*.75) : .77;               // card height scale
   const P = Math.max(W, H)*.8;                                // camera distance
