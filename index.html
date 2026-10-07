@@ -66,6 +66,17 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .facts dd{font-weight:700;color:var(--ink)}
 .facts b{color:var(--red)}
 .tag{white-space:nowrap}
+/* background music switch, on the first line of the hero */
+.snd{pointer-events:auto;display:inline-flex;align-items:center;gap:.75em;margin:-.5em 0 -.5em 2.4em;padding:1.1em 0;border:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--mute);cursor:pointer;vertical-align:middle}
+.snd b{color:var(--red);min-width:2.2em;text-align:left}
+.snd:hover,.snd:focus-visible{color:var(--ink);outline:none}
+.snd:focus-visible .lbl{text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:.35em}
+.snd .eq{display:inline-flex;align-items:flex-end;gap:2px;height:1em}
+.snd .eq i{width:2px;height:22%;background:currentColor;transition:height .4s}
+.snd.on .eq i{background:var(--red);animation:eq 1.2s ease-in-out infinite}
+.snd.on .eq i:nth-child(2){animation-delay:-.45s}.snd.on .eq i:nth-child(3){animation-delay:-.9s}.snd.on .eq i:nth-child(4){animation-delay:-.2s}
+@keyframes eq{0%,100%{height:25%}50%{height:100%}}
+@media (prefers-reduced-motion: reduce){.snd.on .eq i{animation:none;height:70%}}
 /* phones: decorative figure labels would land on the lines at this scale */
 @media (max-width:700px){
   .tag.deco{display:none}
@@ -151,7 +162,7 @@ footer b{color:var(--red)}
 <section id="s1">
   <div class="lay hero">
     <div class="title"><span>PAVEL</span><span class="ghost">PAVEL</span></div>
-    <div class="tag edge" style="top:calc(var(--u)*3)">[ <b>✕✕</b> ] alaskaoneheart.site</div>
+    <div class="tag edge" style="top:calc(var(--u)*3)">[ <b>✕✕</b> ] alaskaoneheart.site<button class="snd" id="snd" type="button" aria-pressed="true" title="Background music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">sound </span><b>on</b></button></div>
     <div class="role edge">Video editor</div>
     <div class="info edge">
       <dl class="facts">
@@ -160,7 +171,7 @@ footer b{color:var(--red)}
         <dt>Based in</dt><dd>Philippines</dd>
         <dt>Local time</dt><dd><span id="ptime">--:--</span> <b>UTC+8</b></dd>
       </dl>
-      <div class="tag">scroll <b>↓</b></div>
+      <div class="tag" id="hint">scroll <b>↓</b></div>
       <div class="bar"></div>
     </div>
     <div class="tag deco" style="left:calc(var(--u)*82);top:calc(var(--u)*3)">vol. <b>01</b></div>
@@ -581,6 +592,60 @@ req();
     el.textContent = String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0');
   };
   tick(); setInterval(tick, 10000);
+})();
+</script>
+<script>
+/* background music: quiet and looped. It starts at once if the browser allows sound, otherwise on the first tap, click or key press.
+   The quiet level is baked into the file, because iPhones ignore audio.volume. */
+(() => {
+  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio();
+  audio.src = audio.canPlayType('audio/webm; codecs="opus"') ? 'assets/bg.webm' : 'assets/bg.m4a';
+  audio.loop = true;
+  audio.preload = 'auto';
+  // phones: the top line runs into the girl, so the switch moves next to the scroll hint, on clean paper
+  const top = btn.parentNode, hint = document.getElementById('hint'), narrow = matchMedia('(max-width:700px)');
+  const place = () => (narrow.matches ? hint : top).appendChild(btn);
+  narrow.addEventListener('change', place);
+  place();
+  let want = true, fade = 0, wasPlaying = false;
+  try { want = localStorage.getItem('sound') !== 'off'; } catch (e) {}
+  const show = () => {
+    btn.classList.toggle('on', want && !audio.paused);
+    state.textContent = want ? 'on' : 'off';
+    btn.setAttribute('aria-pressed', String(want));
+  };
+  const ramp = (to, ms, then) => {             // desktop fade; phones that ignore volume simply jump
+    cancelAnimationFrame(fade);
+    const from = audio.volume, t0 = performance.now();
+    const step = t => { const k = Math.min(1, (t - t0) / ms); audio.volume = Math.min(1, Math.max(0, from + (to - from) * k)); if (k < 1) fade = requestAnimationFrame(step); else if (then) then(); };
+    fade = requestAnimationFrame(step);
+  };
+  function start() {
+    if (!want) return;
+    if (!audio.paused) { ramp(1, 600); return; }      // switched back on during the fade-out
+    audio.volume = 0;
+    audio.play().then(() => { if (want) ramp(1, 2500); else audio.pause(); }).catch(() => {});
+  }
+  const GESTURES = ['pointerup', 'mousedown', 'touchend', 'keydown'];
+  const kick = e => { if (!btn.contains(e.target)) start(); };
+  GESTURES.forEach(t => addEventListener(t, kick, { capture: true, passive: true }));
+  audio.addEventListener('playing', () => GESTURES.forEach(t => removeEventListener(t, kick, { capture: true })));
+  audio.addEventListener('play', show);
+  audio.addEventListener('pause', show);
+  audio.addEventListener('error', () => { btn.hidden = true; });
+  btn.addEventListener('click', () => {
+    want = !want;
+    try { localStorage.setItem('sound', want ? 'on' : 'off'); } catch (e) {}
+    if (want) start(); else ramp(0, 350, () => audio.pause());
+    show();
+  });
+  // a background tab stays quiet, and picks up again on return
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { wasPlaying = !audio.paused; if (wasPlaying) audio.pause(); }
+    else if (wasPlaying) { wasPlaying = false; start(); }
+  });
+  show();
+  start();
 })();
 </script>
 <script>
