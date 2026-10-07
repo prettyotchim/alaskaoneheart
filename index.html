@@ -40,6 +40,8 @@ section{position:relative}
 #s1{height:calc(var(--u)*(230 + var(--d)));background:#fff}
 #s2{background:var(--red);color:#fff}
 #cubeblock{height:calc(var(--u)*112)}
+/* computers: a shorter red room; the floor line from the cube runs on into the wall, over the word GIRLS and behind the girls */
+@media (min-width:701px) and (min-aspect-ratio:4/5){#cubeblock{height:calc(var(--u)*88)} #stage #ring{z-index:5}}
 svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--u)*100);height:calc(var(--u)*342);overflow:visible;pointer-events:none}
 #lback{z-index:1} #lfront{z-index:3}
 .u{position:absolute}
@@ -124,9 +126,12 @@ html.gated{overflow:hidden}
 /* phones: a shorter window onto the same scene, cut from the top so the girls keep their size */
 @media (max-aspect-ratio:4/5){#stage{height:min(100svh,128vw);min-height:0}#scene{top:-22vw}}
 #stage .floor{position:absolute;left:0;right:0;bottom:-8%;height:42%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 24.3%,100% 24.3%,100% 100%,0 100%);will-change:transform}
-#stage .backword{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
+#stage .backword,#stage .bwred{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
 @media (max-aspect-ratio:4/5){#stage .backword{top:28%}}   /* phones: lower, behind the back row's heads */
 #ring{position:absolute;inset:0;z-index:1}
+/* where the white floor line passes over GIRLS, the letters' outline turns red: a red copy of the word, cut to the line's shape */
+#stage .bwclip{position:absolute;inset:0;z-index:4;pointer-events:none;clip-path:polygon(0 0,0 0,0 0)}
+#stage .bwred{-webkit-text-stroke-color:var(--red)}
 .wg{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform}
 .wg .inner{transform-origin:50% 100%;transition:transform 1s cubic-bezier(.2,.9,.25,1),opacity .6s;opacity:0;transform:translateY(40%)}
 .wg.in .inner{opacity:1;transform:none}
@@ -373,10 +378,8 @@ footer b{color:var(--red)}
     <div class="lay">
       <div class="s2type" style="left:calc(var(--u)*58);top:calc(var(--u)*16)"><div class="big2">RED<br>ROOM</div></div>
       <div class="tag" style="left:calc(var(--u)*58.6);top:calc(var(--u)*11)">[ <b>02</b> ] — the cube</div>
-      <div class="tag deco" style="left:calc(var(--u)*76);top:calc(var(--u)*96)">sit <b>here</b></div>
       <div class="spark" style="left:calc(var(--u)*80);top:calc(var(--u)*30)"></div>
       <div class="spark" style="left:calc(var(--u)*24);top:calc(var(--u)*74);transform:scale(.6)"></div>
-      <div class="bar" style="left:calc(var(--u)*76);top:calc(var(--u)*98.6);width:calc(var(--u)*14)"></div>
       <div id="sitter"><img src="assets/sit.webp" alt=""></div>
     </div>
   </div>
@@ -384,6 +387,7 @@ footer b{color:var(--red)}
     <div id="stage">
       <div id="scene">
         <div class="backword">GIRLS</div>
+        <div class="bwclip" aria-hidden="true"><div class="bwred">GIRLS</div></div>
         <div class="floor"></div>
         <div id="ring"></div>
       </div>
@@ -499,6 +503,9 @@ if (matchMedia('(max-width:1100px)').matches) {
   C.segs = [['-x','y',L1], ['+z','y',L2], ...tail];
   C.boxes = [];
 }
+// computers: the red room is shorter and the floor line from the cube runs on over GIRLS, out past the right edge
+const WALLUP = matchMedia('(min-width:701px) and (min-aspect-ratio:4/5)').matches;
+if (WALLUP) LINES[0].segs[LINES[0].segs.length - 1][2] = 125;
 // phones: the scene starts D lower; lines that come from above the page just run longer
 for (const L of LINES) {
   if (L.start[1] < 0 && L.segs[0][0] === '-y') L.segs[0][2] += D / Math.cos(PIT);
@@ -644,6 +651,7 @@ function frame(){
   }
   drawCube();
   drawCross();
+  if (WALLUP) clipWord();
   parallax(sy, vh);
   if (wall(sy, vh)) moving = true;
   if (moving) req();
@@ -715,13 +723,24 @@ function layoutWall(){
   placeWall();
 }
 let camX = 0, camY = 0, aimX = 0, aimY = 0, wallSeen = false;
+// the red copy of GIRLS shows only under the floor line: copy the line's drawn shape into the clip, in the scene's pixels
+const floorSeg = MAIN.S[MAIN.S.length - 1], bwclip = stage.querySelector('.bwclip'), bwred = stage.querySelector('.bwred');
+let clipLast = '';
+function clipWord(){
+  const pts = floorSeg._last || '';
+  if (pts === clipLast && pts) return;
+  const a = lfront.getBoundingClientRect(), b = scene.getBoundingClientRect(), k = a.width/100;
+  const poly = pts ? pts.split(' ').map(q => { const [x, y] = q.split(',').map(Number); return `${(a.left - b.left + x*k).toFixed(1)}px ${(a.top - b.top + y*k).toFixed(1)}px`; }).join(',') : '0 0,0 0,0 0';
+  bwclip.style.clipPath = `polygon(${poly})`;
+  clipLast = pts;
+}
 function placeWall(){
   const dx = camX*AMP, dy = camY*AMP*.6;
   for (const el of wgs) {
     const X = el._X + dx*el._f, Y = el._Y + dy*el._f;
     el.style.transform = `translate3d(${(X - el._w/2).toFixed(1)}px,${(Y - el._hh).toFixed(1)}px,0) scale(${el._s.toFixed(4)}) perspective(${el._P|0}px) rotateY(${(el._ang*.6).toFixed(1)}deg)`;
   }
-  backword.style.transform = `translate3d(calc(-50% + ${(dx*.6).toFixed(1)}px),${(dy*.6).toFixed(1)}px,0) skewX(-9deg)`;
+  backword.style.transform = bwred.style.transform = `translate3d(calc(-50% + ${(dx*.6).toFixed(1)}px),${(dy*.6).toFixed(1)}px,0) skewX(-9deg)`;
   floor.style.transform = `translate3d(0,${(dy*floorF).toFixed(1)}px,0)`;
 }
 function wall(sy, vh){
@@ -770,7 +789,7 @@ if (DOE && typeof DOE.requestPermission === 'function') {
 } else if (DOE) addEventListener('deviceorientation', onTilt, {passive:true});
 
 addEventListener('scroll', req, {passive:true});
-addEventListener('resize', () => { measure(); layoutWall(); req(); });
+addEventListener('resize', () => { measure(); layoutWall(); clipLast = ''; req(); });
 measure(); layoutWall();
 // intro: lines draw from zero on load, or once the visitor is past the entry screen
 document.addEventListener('enter', req);
