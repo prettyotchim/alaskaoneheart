@@ -153,7 +153,7 @@ footer b{color:var(--red)}
 @media (max-width:700px){
   .about .tag{color:#fff;font-size:8.5px;letter-spacing:.14em;line-height:2}
   .about .tag b{color:#fff;background:var(--ink);padding:0 .4em}
-  .top3{left:calc(var(--u)*60.6);top:calc(var(--u)*(230 + var(--d) + 72.8))}
+  .top3{left:calc(var(--u)*60.6);top:calc(var(--u)*(230 + var(--d) + 76))}
   #cubeblock{height:calc(var(--u)*112 + 16px)}   /* a strip more red room, so the favourites clear the floor line on small phones */
   .fav{left:max(calc(var(--u)*4),14px);top:calc(var(--u)*(230 + var(--d) + 112) - 52px)}
   .fav .hrs{display:block;padding-left:6.6em}
@@ -161,6 +161,44 @@ footer b{color:var(--red)}
   .top3 a{text-decoration-color:rgba(255,255,255,.4)}
   .top3 a:hover,.top3 a:focus-visible{color:#fff;text-decoration-color:#fff}
 }
+/* After Effects status: a white card, the counterpart of the black Spotify plate. Computers: at the end of the white room, in the frame the lines leave there */
+.ae-wrap{--aew:clamp(272px,calc(var(--u)*30),560px);--logo:clamp(46px,calc(var(--u)*4.6),80px);--pad:clamp(8px,calc(var(--u)*.8),15px);--lab:clamp(9px,calc(var(--u)*.62),11px);
+  position:absolute;width:var(--aew);left:calc(var(--u)*53);top:calc(var(--u)*214.5);pointer-events:auto}
+.ae{display:grid;grid-template-columns:var(--logo) minmax(0,1fr) auto;grid-template-areas:"logo label tc" "logo proj proj" "logo comp comp" "logo tl tl";column-gap:calc(var(--pad)*1.1);row-gap:3px;align-items:center;
+  padding:var(--pad) calc(var(--pad)*1.3) var(--pad) var(--pad);background:#fff;color:var(--ink);border:1.5px solid var(--ink);box-shadow:5px 5px 0 var(--ink);
+  font-family:'JetBrains Mono',ui-monospace,monospace;opacity:0;transform:translateY(14px);transition:opacity .7s ease .2s,transform .7s cubic-bezier(.2,.9,.25,1) .2s}
+.ae.in{opacity:1;transform:none}
+.ae-logo{grid-area:logo;width:var(--logo);height:var(--logo)}
+.ae-logo svg{display:block;width:100%;height:100%}
+.ae-logo rect{fill:#00005b}
+.ae-logo text{fill:#9999ff;font:700 10.5px Arial,Helvetica,sans-serif;letter-spacing:-.2px;text-anchor:middle}
+.ae-label{grid-area:label;display:flex;align-items:center;gap:6px;min-width:0;font-size:var(--lab);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);white-space:nowrap;overflow:hidden}
+.ae-dot{width:6px;height:6px;border-radius:50%;background:#c9c0c4;flex:none}
+.ae.live .ae-dot{background:var(--red);animation:np-pulse 1.4s ease-in-out infinite}
+.ae-tc{grid-area:tc;font-size:var(--lab);letter-spacing:.1em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ae-proj{grid-area:proj;font-family:Anton,Impact,sans-serif;font-size:clamp(15px,calc(var(--u)*1.3),23px);line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ae-comp{grid-area:comp;font-size:clamp(11px,calc(var(--u)*.8),14px);color:#5d5458;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* a tiny timeline: three layer bars in After Effects label colours and a playhead that runs while he works */
+.ae-tl{grid-area:tl;position:relative;display:grid;gap:2px;margin-top:3px}
+.ae-tl i{position:relative;display:block;height:3px;background:#f1ecee}
+.ae-tl i::after{content:"";position:absolute;top:0;bottom:0;left:var(--a,10%);width:var(--w,40%);background:var(--c,#9999ff)}
+.ae-tl b{position:absolute;top:-3px;bottom:-3px;left:calc(var(--p,1) * (100% - 2px));width:2px;background:var(--red)}
+.ae.live .ae-tl b{animation:ae-play 12s linear infinite}
+.ae.render .ae-tl b{animation-duration:2.4s}
+@keyframes ae-play{from{left:0}to{left:calc(100% - 2px)}}
+/* up to 1100px the frame is narrower than the card's smallest size, so it starts further left and drops "Last in AE" */
+@media (max-width:1100px){.ae-wrap{--aew:clamp(236px,calc(var(--u)*31),560px);left:calc(var(--u)*51.5)}.ae-pre{display:none}}
+/* phones: a narrow tile in the red room, right of the cube */
+@media (max-width:700px){
+  .ae-wrap{--logo:24px;--pad:8px;--lab:8px;width:auto;left:calc(var(--u)*59);right:12px;top:calc(var(--u)*(230 + var(--d) + 41))}
+  .ae{grid-template-columns:var(--logo) minmax(0,1fr);grid-template-areas:"logo label" "tc tc" "proj proj" "comp comp" "tl tl";row-gap:3px;border-width:1px;box-shadow:4px 4px 0 var(--ink)}
+  .ae-label{letter-spacing:.1em;gap:5px}
+  .ae-tc{font-size:12px;letter-spacing:.04em;margin-top:2px}
+  .ae-proj{font-size:14px}
+  .ae-comp{font-size:9px}
+  .ae-pre{display:none}
+}
+@media (prefers-reduced-motion: reduce){.ae{transition:none}.ae-dot,.ae-tl b{animation:none!important}}
 /* now playing (Spotify, with Discord presence as a stand-in): a plate under the gun girl that hides where she fades out */
 .np-wrap{--npw:clamp(272px,calc(var(--u)*32.5),640px);--art:clamp(46px,calc(var(--u)*4.6),80px);--pad:clamp(8px,calc(var(--u)*.8),15px);--lab:clamp(9px,calc(var(--u)*.62),11px);
   position:absolute;z-index:4;width:var(--npw);pointer-events:auto;will-change:transform;
@@ -317,6 +355,17 @@ footer b{color:var(--red)}
       <li><i>02</i><a href="https://open.spotify.com/artist/1YMUxFiaKsU85N9YolW0W9" target="_blank" rel="noopener">вышел покурить</a></li>
       <li><i>03</i><a href="https://open.spotify.com/artist/1pxLlPRiWRUBGdSOrVL4f0" target="_blank" rel="noopener">kai angel</a></li>
     </ol>
+  </div>
+  <!-- After Effects status, from Pavel's own AE plugin (ae-plugin/) through the Worker; hidden until the plugin has reported once -->
+  <div class="ae-wrap" id="aew" hidden>
+    <div class="ae" id="ae" role="status">
+      <span class="ae-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5"/><text x="12" y="16.2">Ae</text></svg></span>
+      <span class="ae-label"><i class="ae-dot"></i><span id="ae-state">After Effects</span></span>
+      <span class="ae-tc" id="ae-tc"></span>
+      <span class="ae-proj" id="ae-proj"></span>
+      <span class="ae-comp" id="ae-comp"></span>
+      <span class="ae-tl" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
+    </div>
   </div>
 </div>
 </div>
@@ -750,6 +799,77 @@ req();
   });
   show();
   if (!gate) start();
+})();
+</script>
+<script>
+/* After Effects status. Pavel's own AE plugin (ae-plugin/ in this repo) reports to the Worker every 30 seconds while After Effects is open;
+   the Worker answers live, render (with the render queue item), off (how long ago and how long that session was) or none. */
+(() => {
+  const AE_URL = 'https://super-forest-c227.avantgardeqqe.workers.dev/ae';
+  const $ = id => document.getElementById(id);
+  const wrap = $('aew'), card = $('ae'), label = $('ae-state'), tc = $('ae-tc'), proj = $('ae-proj'), comp = $('ae-comp'), lanes = card.querySelectorAll('.ae-tl i');
+  const FPS = 24, pad = n => String(n).padStart(2, '0');
+  // session time as an editing timecode: hours:minutes:seconds, and frames while live
+  const code = (ms, frames) => {
+    const s = Math.floor(ms / 1000), f = Math.floor(ms % 1000 / 1000 * FPS);
+    return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60) + (frames ? ':' + pad(f) : '');
+  };
+  const ago = ms => {
+    const m = Math.floor(ms / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
+    return m < 1 ? 'just now' : h < 1 ? `${m} min ago` : d < 1 ? `${h} h ago` : `${d} day${d > 1 ? 's' : ''} ago`;
+  };
+  const COLORS = ['#9999ff', '#e3132b', '#141014', '#45c2b6', '#f2a541'];
+  // the layer bars come from the project name, so each project draws its own little timeline
+  function lanesFor(name) {
+    let h = 2166136261;
+    for (const ch of name) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; }
+    lanes.forEach((el, i) => {
+      const r = (h >>> (i * 9)) & 511, a = 4 + r % 46, w = 18 + (r >> 3) % (92 - a - 18);
+      el.style.setProperty('--a', a + '%'); el.style.setProperty('--w', w + '%'); el.style.setProperty('--c', COLORS[(h >>> (i * 3 + 20)) % COLORS.length]);
+    });
+  }
+  let base = 0, raf = 0, near = true, shown = null;
+  const run = () => { tc.textContent = code(Date.now() - base, true); raf = requestAnimationFrame(run); };
+  function render(j) {
+    cancelAnimationFrame(raf);
+    if (!j || !j.ok || !j.state || j.state === 'none') { wrap.hidden = true; shown = null; return; }
+    shown = j;
+    wrap.hidden = false;
+    const live = j.state === 'live' || j.state === 'render';
+    card.classList.toggle('live', live);
+    card.classList.toggle('render', j.state === 'render');
+    const pre = document.createElement('span'); pre.className = 'ae-pre';
+    if (j.state === 'render') { label.textContent = 'Render'; pre.textContent = 'ing'; label.append(pre, j.rq && j.rq[1] ? ` ${j.rq[0]}/${j.rq[1]}` : ''); }
+    else if (live) { label.textContent = 'After Effects'; pre.textContent = 'In '; label.prepend(pre); }
+    else { label.textContent = ago(j.ago || 0); pre.textContent = 'Last in AE · '; label.prepend(pre); }
+    const name = String(j.project || '').replace(/\.aepx?$/i, '').trim() || 'Untitled Project';
+    proj.textContent = name;
+    comp.textContent = j.comp ? `${j.comp} · ${j.layers} layer${j.layers === 1 ? '' : 's'}` : 'No composition open';
+    lanesFor(name);
+    card.style.setProperty('--p', live ? 0 : 1);
+    if (live) { base = Date.now() - (j.elapsed || 0); if (near && !document.hidden) run(); else tc.textContent = code(j.elapsed || 0, true); }
+    else tc.textContent = code(j.session || 0, false);
+    card.setAttribute('aria-label', (live ? 'Pavel is in After Effects' : 'Pavel was last in After Effects ' + ago(j.ago || 0)) + ', project ' + name);
+  }
+  let timer = 0;
+  async function ask() {
+    clearTimeout(timer);
+    let j = null;
+    try { j = await (await fetch(AE_URL, { cache: 'no-store' })).json(); } catch (e) { /* offline: keep what is shown */ }
+    if (j && (j.ok || j.reason === 'setup')) render(j);
+    timer = setTimeout(ask, document.hidden ? 120000 : near ? 20000 : 60000);
+  }
+  // reveal like the Spotify plate, and only count frames while the card is on screen
+  if ('IntersectionObserver' in window) new IntersectionObserver(e => {
+    const v = e[e.length - 1];
+    near = v.isIntersecting;
+    if (near) { card.classList.add('in'); if (shown) render(shown); } else cancelAnimationFrame(raf);
+  }, { rootMargin: '10% 0px' }).observe(wrap);
+  else card.classList.add('in');
+  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(raf); else ask(); });
+  if (/full/.test(location.search)) card.classList.add('in');
+  if (location.hash === '#demo') render({ ok: true, state: 'live', project: 'alaska_edit_v3.aep', comp: 'MAIN', layers: 24, rq: [0, 0], elapsed: 5025000 });
+  else ask();
 })();
 </script>
 <script>
