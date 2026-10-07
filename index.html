@@ -67,16 +67,28 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .facts b{color:var(--red)}
 .tag{white-space:nowrap}
 /* background music switch, on the first line of the hero */
-.snd{pointer-events:auto;display:inline-flex;align-items:center;gap:.75em;margin:-.5em 0 -.5em 2.4em;padding:1.1em 0;border:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--mute);cursor:pointer;vertical-align:middle}
+.snd{pointer-events:auto;display:inline-flex;align-items:center;gap:.75em;margin:-1.1em 0 -1.1em 2.4em;padding:1.1em 0;border:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--mute);cursor:pointer;vertical-align:middle}
 .snd b{color:var(--red);min-width:2.2em;text-align:left}
 .snd:hover,.snd:focus-visible{color:var(--ink);outline:none}
 .snd:focus-visible .lbl{text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:.35em}
-.snd .eq{display:inline-flex;align-items:flex-end;gap:2px;height:1em}
-.snd .eq i{width:2px;height:22%;background:currentColor;transition:height .4s}
-.snd.on .eq i{background:var(--red);animation:eq 1.2s ease-in-out infinite}
-.snd.on .eq i:nth-child(2){animation-delay:-.45s}.snd.on .eq i:nth-child(3){animation-delay:-.9s}.snd.on .eq i:nth-child(4){animation-delay:-.2s}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:1em}
+.eq i{width:2px;height:22%;background:currentColor;transition:height .4s}
+.snd.on .eq i,.gate .eq i{background:var(--red);animation:eq 1.2s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.45s}.eq i:nth-child(3){animation-delay:-.9s}.eq i:nth-child(4){animation-delay:-.2s}
 @keyframes eq{0%,100%{height:25%}50%{height:100%}}
-@media (prefers-reduced-motion: reduce){.snd.on .eq i{animation:none;height:70%}}
+/* entry screen: browsers only allow sound after a click, so the first click is the way in */
+html.gated{overflow:hidden}
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);color:var(--ink);cursor:pointer;outline:none;
+  clip-path:inset(0 0 0 0);transition:clip-path .8s cubic-bezier(.7,0,.2,1)}
+.gate.out{clip-path:inset(0 0 100% 0);pointer-events:none}
+.gate .gtag{top:calc(var(--u)*3);left:max(calc(var(--u)*5.6),16px)}
+.gmid{display:flex;flex-direction:column;align-items:center;gap:max(calc(var(--u)*1.6),14px);padding:0 16px}
+.genter{font-family:Anton,Impact,sans-serif;font-size:clamp(40px,calc(var(--u)*8),128px);line-height:.9;letter-spacing:.01em;text-transform:uppercase;transform:skewX(-9deg);white-space:nowrap;transition:color .2s}
+.genter:hover,.gate:focus-visible .genter{color:var(--red)}
+.ghint{display:flex;align-items:center;gap:.75em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.g-touch{display:none}
+@media (hover:none){.g-mouse{display:none}.g-touch{display:inline}}
+@media (prefers-reduced-motion: reduce){.snd.on .eq i,.gate .eq i{animation:none;height:70%}.gate{transition:none}}
 /* phones: decorative figure labels would land on the lines at this scale */
 @media (max-width:700px){
   .tag.deco{display:none}
@@ -154,6 +166,23 @@ footer b{color:var(--red)}
 </style>
 </head>
 <body>
+<div id="gate" class="gate" role="button" tabindex="0" aria-label="Enter alaskaoneheart.site with sound">
+  <div class="tag gtag">[ <b>✕✕</b> ] alaskaoneheart.site</div>
+  <div class="gmid">
+    <div class="genter"><span class="g-mouse">click</span><span class="g-touch">tap</span> to enter</div>
+    <div class="ghint"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>sound on</div>
+  </div>
+</div>
+<script>
+// visitors who turned the music off, and the ?full debug view, go straight in
+(() => {
+  let off = false;
+  try { off = localStorage.getItem('sound') === 'off'; } catch (e) {}
+  if (off || /full/.test(location.search)) document.getElementById('gate').remove();
+  else document.documentElement.classList.add('gated');
+})();
+</script>
+<noscript><style>#gate{display:none}</style></noscript>
 <div id="page">
 
 <svg class="lines" id="lback" viewBox="0 0 100 342" preserveAspectRatio="xMinYMin meet" aria-hidden="true"></svg>
@@ -439,8 +468,10 @@ function targetD(L, sy, vh){
 }
 let upx = 1, ticking = false;
 function measure(){ upx = lback.getBoundingClientRect().width/100; }
+const gated = () => document.documentElement.classList.contains('gated');
 function frame(){
   ticking = false;
+  if (gated()) return;                                        // the intro waits behind the entry screen
   const vh = innerHeight, sy = scrollY;
   let moving = false;
   for (const L of LINES) {
@@ -579,7 +610,8 @@ if (DOE && typeof DOE.requestPermission === 'function') {
 addEventListener('scroll', req, {passive:true});
 addEventListener('resize', () => { measure(); layoutWall(); req(); });
 measure(); layoutWall();
-// intro: lines draw from zero on load
+// intro: lines draw from zero on load, or once the visitor is past the entry screen
+document.addEventListener('enter', req);
 req();
 })();
 </script>
@@ -624,7 +656,20 @@ req();
     if (!want) return;
     if (!audio.paused) { ramp(1, 600); return; }      // switched back on during the fade-out
     audio.volume = 0;
-    audio.play().then(() => { if (want) ramp(1, 2500); else audio.pause(); }).catch(() => {});
+    audio.play().then(() => { if (want) { ramp(1, 2500); enter(); } else audio.pause(); }).catch(() => {});
+  }
+  const gate = document.getElementById('gate');
+  function enter() {
+    if (!gate || gate.classList.contains('out')) return;
+    gate.classList.add('out');
+    document.documentElement.classList.remove('gated');
+    document.dispatchEvent(new Event('enter'));
+    setTimeout(() => gate.remove(), 900);
+  }
+  if (gate) {
+    gate.addEventListener('click', () => { start(); enter(); });
+    // Enter or Space works without focusing the screen first (focus would paint the text red before any hover)
+    addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !gate.classList.contains('out')) { e.preventDefault(); start(); enter(); } });
   }
   const GESTURES = ['pointerup', 'mousedown', 'touchend', 'keydown'];
   const kick = e => { if (!btn.contains(e.target)) start(); };
@@ -632,7 +677,7 @@ req();
   audio.addEventListener('playing', () => GESTURES.forEach(t => removeEventListener(t, kick, { capture: true })));
   audio.addEventListener('play', show);
   audio.addEventListener('pause', show);
-  audio.addEventListener('error', () => { btn.hidden = true; });
+  audio.addEventListener('error', () => { btn.hidden = true; enter(); });
   btn.addEventListener('click', () => {
     want = !want;
     try { localStorage.setItem('sound', want ? 'on' : 'off'); } catch (e) {}
