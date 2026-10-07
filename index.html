@@ -1027,7 +1027,7 @@ req();
    While a preview from the Spotify plate plays, the music steps aside and comes back after it (the plate script sends "preview"). */
 (() => {
   const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=5';
-  const LEVEL = matchMedia('(hover: hover) and (pointer: fine)').matches ? 0.18 : 1;   // 0.18 = -15 dB, about -52 LUFS (pavel: 8 dB under the first 0.45)
+  const LEVEL = matchMedia('(hover: hover) and (pointer: fine)').matches ? 0.09 : 1;   // 0.09 = -21 dB, about -58 LUFS (pavel asked three times for quieter: 0.45, 0.18, now 6 dB under that)
   window.siteSound = { level: LEVEL };
   // AAC wherever it is surely supported (Safari's WebM support varies by version), Opus otherwise; if one fails, the other stands in
   const files = ['assets/bg2.m4a', 'assets/bg2.webm'];
