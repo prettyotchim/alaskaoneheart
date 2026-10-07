@@ -117,6 +117,33 @@ html.gated{overflow:hidden}
 /* --- section 2 --- */
 .s2type{position:absolute;z-index:2}
 .big2{font-family:Anton,Oswald,Impact,sans-serif;color:transparent;-webkit-text-stroke:calc(var(--u)*.12) rgba(255,255,255,.85);font-size:calc(var(--u)*13);line-height:.85;transform:skewX(-9deg);white-space:nowrap}
+/* computers: the favourite game under RED ROOM, 5000 hours drawn in outline like the titles, the game's name on a black strip across it */
+.bs{position:absolute;z-index:2;left:calc(var(--u)*57.6);top:calc(var(--u)*47.5)}
+.bs .tag{position:static;color:#fff;margin-left:calc(var(--u)*1.2)}
+.bs .tag b{color:#fff;background:var(--ink);padding:0 .4em}
+.bs-num{margin-top:calc(var(--u)*1.2);font-family:Anton,Oswald,Impact,sans-serif;font-size:calc(var(--u)*17.5);line-height:.8;letter-spacing:.01em;color:transparent;-webkit-text-stroke:calc(var(--u)*.12) rgba(255,255,255,.85);transform:skewX(-9deg);white-space:nowrap}
+.bs-num small{font-size:.34em;margin-left:.12em;letter-spacing:.04em}
+.bs-name{position:absolute;left:calc(var(--u)*4.5);top:calc(var(--u)*12.6);padding:.12em .5em .08em;background:var(--ink);color:#fff;font-family:Anton,Oswald,Impact,sans-serif;font-size:calc(var(--u)*3.3);line-height:1;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;transform:rotate(-6deg);box-shadow:calc(var(--u)*.35) calc(var(--u)*.35) 0 var(--red-r)}
+.fav .bs-old{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media (max-width:700px){.bs{display:none}.fav .bs-old{display:block}}
+@media (min-width:701px){.fav{display:none}}   /* both favourites have their own places on computers */
+/* contacts: a list like the top 3, white on the red room; Discord has no link, so its name is copied */
+.contacts{position:absolute;z-index:2;left:calc(var(--u)*58.6);top:calc(var(--u)*71);color:#fff;line-height:2.1}
+.contacts b{color:#fff;background:var(--ink);padding:0 .4em}
+.contacts ol{list-style:none}
+.contacts li{display:grid;grid-template-columns:2.6em 9em auto;align-items:baseline}
+.contacts i{font-style:normal;color:rgba(255,255,255,.6)}
+.contacts a,.contacts button{pointer-events:auto;justify-self:start;padding:0;border:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:#fff;cursor:pointer;
+  text-decoration:underline 1px rgba(255,255,255,.45);text-underline-offset:.45em;transition:text-decoration-color .2s}
+.contacts a:hover,.contacts a:focus-visible,.contacts button:hover,.contacts button:focus-visible{text-decoration-color:#fff;outline:none}
+.contacts em{font-style:normal;color:rgba(255,255,255,.75);text-transform:none;letter-spacing:.06em}
+.contacts .copied em{color:#fff}
+/* phones: under the favourites, bottom left of the room */
+@media (max-width:700px){
+  .contacts{left:max(calc(var(--u)*4),14px);top:calc(var(--u)*112 + 12px);font-size:8.5px;letter-spacing:.12em;line-height:2}
+  .contacts li{grid-template-columns:2.4em 8.2em auto}
+}
 #s2 .tag{color:#fff}
 #s2 .tag b{color:#fff;background:var(--ink);padding:0 .4em}
 #s2 .spark{color:#fff}
@@ -173,7 +200,7 @@ footer b{color:var(--red)}
   .about .tag b{color:#fff;background:var(--ink);padding:0 .4em}
   /* the top 3 goes under the After Effects tile (about 205px tall) and past the end of the floor line (108u into the room) */
   .top3{left:calc(var(--u)*60.6);top:max(calc(var(--u)*(230 + var(--d) + 108)),calc(var(--u)*(230 + var(--d) + 41) + 222px))}
-  #cubeblock{height:max(calc(var(--u)*108 + 84px),calc(var(--u)*41 + 306px),calc(var(--u)*112 + 16px))}   /* and the favourites still clear the floor line */
+  #cubeblock{height:max(calc(var(--u)*108 + 84px),calc(var(--u)*41 + 306px),calc(var(--u)*112 + 92px))}   /* and the favourites still clear the floor line, the contacts under them */
   .fav{left:max(calc(var(--u)*4),14px);top:calc(var(--u)*(230 + var(--d) + 112) - 52px)}
   .fav .hrs{display:block;padding-left:6.6em}
   .top3 i{color:rgba(255,255,255,.6);margin-right:1.1em}
@@ -433,6 +460,19 @@ footer b{color:var(--red)}
   <div id="cubeblock">
     <div class="lay">
       <div class="s2type" style="left:calc(var(--u)*58);top:calc(var(--u)*16)"><div class="big2">RED<br>ROOM</div></div>
+      <div class="tag contacts">
+        <p>contact <b>me</b></p>
+        <ol>
+          <li><i>01</i><a href="https://t.me/alaskaoneheart" target="_blank" rel="noopener">telegram ↗</a><em>@alaskaoneheart</em></li>
+          <li><i>02</i><a href="https://steamcommunity.com/profiles/76561199642531515/" target="_blank" rel="noopener">steam ↗</a><em>profile</em></li>
+          <li><i>03</i><button type="button" id="discord" data-nick="pavel6381" title="Copy the nickname">discord</button><em>pavel6381</em></li>
+        </ol>
+      </div>
+      <div class="bs">
+        <span class="tag">fav. <b>game</b></span>
+        <div class="bs-num" aria-hidden="true">5000<small>H</small></div>
+        <div class="bs-name">Brawl Stars<span class="sr"> · 5000 hours</span></div>
+      </div>
       <div class="tag" style="left:calc(var(--u)*58.6);top:calc(var(--u)*11)">[ <b>02</b> ] — the cube</div>
       <div class="spark" style="left:calc(var(--u)*80);top:calc(var(--u)*30)"></div>
       <div class="spark" style="left:calc(var(--u)*24);top:calc(var(--u)*74);transform:scale(.6)"></div>
@@ -466,7 +506,7 @@ footer b{color:var(--red)}
   </div>
   <div class="tag fav">
     <p class="eva-old">fav. <b>anime</b> — evangelion</p>
-    <p>fav. <b>game</b> — brawl stars <span class="hrs">· 5k hours</span></p>
+    <p class="bs-old">fav. <b>game</b> — brawl stars <span class="hrs">· 5k hours</span></p>
   </div>
   <div class="tag top3">
     <p>top <b>3</b> — artists</p>
@@ -951,6 +991,22 @@ measure(); layoutWall();
 // intro: lines draw from zero on load, or once the visitor is past the entry screen
 document.addEventListener('enter', req);
 req();
+})();
+</script>
+<script>
+/* Discord has no profile links people can open, so the button copies Pavel's nickname */
+(() => {
+  const btn = document.getElementById('discord'), nick = btn.dataset.nick, note = btn.nextElementSibling, li = btn.parentNode;
+  let t = 0;
+  btn.addEventListener('click', async () => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(nick); ok = true; } catch (e) {
+      const r = document.createRange(); r.selectNodeContents(note); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);   // older browsers: select it to copy by hand
+    }
+    if (!ok) return;
+    li.classList.add('copied'); note.textContent = 'copied ✓';
+    clearTimeout(t); t = setTimeout(() => { li.classList.remove('copied'); note.textContent = nick; }, 1600);
+  });
 })();
 </script>
 <script>
