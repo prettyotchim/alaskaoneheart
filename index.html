@@ -615,8 +615,7 @@ req();
       state.textContent = t.label;
       song.textContent = t.song;
       artist.textContent = t.artist || '';
-      img.hidden = !t.art;
-      if (t.art && img.getAttribute('src') !== t.art) img.src = t.art;
+      setArt(t.art);
       if (t.url) { song.href = t.url; song.setAttribute('aria-label', t.label + ' on Spotify: ' + t.song + (t.artist ? ' by ' + t.artist : '')); }
       else { song.removeAttribute('href'); song.removeAttribute('aria-label'); }
       if (t.end > t.start) { ts = t; tick(); if (t.live) timer = setInterval(tick, 1000); }
@@ -630,6 +629,19 @@ req();
     }
     np.classList.toggle('has-time', !!ts);
   }
+
+  /* covers: through the Worker first (some networks can't reach i.scdn.co), then straight from Spotify, else the note icon */
+  const viaWorker = u => { const m = /^https:\/\/i\.scdn\.co\/image\/([0-9a-f]+)$/.exec(u || ''); return m && NOW_URL ? NOW_URL.replace(/\/now$/, '/art/') + m[1] : u; };
+  function setArt(u) {
+    if (!u) { img.hidden = true; return; }
+    const want = viaWorker(u);
+    if (img.dataset.want !== want) { img.dataset.want = want; img.dataset.direct = u; img.dataset.failed = ''; img.hidden = false; img.src = want; }
+    else img.hidden = img.dataset.failed === '1';
+  }
+  img.addEventListener('error', () => {
+    if (img.dataset.direct && img.getAttribute('src') !== img.dataset.direct) img.src = img.dataset.direct;
+    else { img.dataset.failed = '1'; img.hidden = true; }
+  });
 
   /* ---------- Spotify through the Worker ---------- */
   const fromSpotify = j => {

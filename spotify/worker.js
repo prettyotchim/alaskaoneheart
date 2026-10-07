@@ -1,6 +1,7 @@
 /* Now-playing endpoint for alaskaoneheart.site, run as a Cloudflare Worker.
    It keeps the Spotify client secret and Pavel's refresh token, so the public site never sees them.
      GET /now        JSON for the site: { ok, playing, paused, last, song, artist, art, url, progress, duration }
+     GET /art/<id>   the cover from i.scdn.co, passed through for browsers that can't load Spotify's image host
      GET /           setup checklist
      GET /login      Spotify consent screen, which returns to /callback and prints the refresh token once
    Secrets (Worker > Settings > Variables and Secrets, type Secret): SPOTIFY_SECRET, SPOTIFY_REFRESH. */
@@ -17,6 +18,7 @@ export default {
     const url = new URL(req.url), redirect = url.origin + '/callback';
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
     if (url.pathname === '/now') return now(env);
+    if (url.pathname.startsWith('/art/')) return art(url.pathname.slice(5));
     if (url.pathname === '/login') return login(redirect);
     if (url.pathname === '/callback') return callback(req, url, env, redirect);
     return home(url, env, redirect);
@@ -88,6 +90,14 @@ async function tokenCall(env, params) {
     body: new URLSearchParams(params)
   });
   return { ok: r.ok, j: await r.json().catch(() => ({})) };
+}
+
+// covers only: the id is the hex name Spotify gives each image, so this can't be used to fetch anything else
+async function art(id) {
+  if (!/^[0-9a-f]{16,64}$/.test(id)) return new Response('bad id', { status: 400, headers: CORS });
+  const r = await fetch('https://i.scdn.co/image/' + id, { cf: { cacheTtl: 604800, cacheEverything: true } });
+  if (!r.ok) return new Response('no cover', { status: r.status, headers: CORS });
+  return new Response(r.body, { headers: { ...CORS, 'Content-Type': r.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=604800, immutable' } });
 }
 
 const json = o => new Response(JSON.stringify(o), { headers: { ...CORS, 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
