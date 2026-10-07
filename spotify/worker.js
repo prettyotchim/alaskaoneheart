@@ -1,6 +1,6 @@
 /* Now-playing endpoint for alaskaoneheart.site, run as a Cloudflare Worker.
    It keeps the Spotify client secret and Pavel's refresh token, so the public site never sees them.
-     GET /now        JSON for the site: { ok, playing, paused, last, song, artist, art, url, progress, duration }
+     GET /now        JSON for the site: { ok, playing, paused, last, song, artist, art, url, progress, duration, ago }
      GET /art/<id>   the cover from i.scdn.co, passed through for browsers that can't load Spotify's image host
      GET /           setup checklist
      GET /login      Spotify consent screen, which returns to /callback and prints the refresh token once
@@ -32,14 +32,17 @@ async function now(env) {
     try { cached = await read(env); } catch (e) { cached = { ok: false, reason: e.reason || 'error', message: e.message }; }
     cachedAt = Date.now();
   }
-  const out = { ...cached };
-  if (out.playing) out.progress = Math.min(out.duration || Infinity, out.progress + Date.now() - cachedAt);
+  const out = { ...cached }, t = Date.now();
+  if (out.playing) out.progress = Math.min(out.duration || Infinity, out.progress + t - cachedAt);
+  // ms since the track last played: the pause for a paused track, the end of play for the last one
+  const at = out.paused ? out.changed_at : out.last ? Date.parse(out.played_at) : 0;
+  if (at > 0 && at < t + 60000) out.ago = Math.max(0, t - at);
   return json(out);
 }
 
 async function read(env) {
   const cur = await api(env, '/me/player/currently-playing?additional_types=episode');
-  if (cur && cur.item) return { ok: true, playing: !!cur.is_playing, paused: !cur.is_playing, ...track(cur.item), progress: cur.progress_ms || 0 };
+  if (cur && cur.item) return { ok: true, playing: !!cur.is_playing, paused: !cur.is_playing, ...track(cur.item), progress: cur.progress_ms || 0, changed_at: cur.timestamp || 0 };
   // nothing on right now: show the last track instead
   const rec = await api(env, '/me/player/recently-played?limit=1').catch(() => null);
   const it = rec && rec.items && rec.items[0];

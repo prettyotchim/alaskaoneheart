@@ -26,8 +26,10 @@
   --wh-t:#ffffff; --wh-l:#f6e0e2; --wh-r:#e2b9bd;
   --bg:#ffffff; --ink:#141014; --mute:#857a80;
   --u: 1vw;   /* the whole composition is 100u wide, so it always fits the screen */
+  --d: 0;     /* phones: the lines and girls start this many u lower, under the hero text (the script keeps the load-time value) */
   color-scheme: light;
 }
+@media (max-width:700px){:root{--d:14}}
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
 html,body{background:var(--bg);color:var(--ink);overflow-x:clip}
@@ -35,7 +37,7 @@ body{font-family:'JetBrains Mono',ui-monospace,monospace;-webkit-font-smoothing:
 #page{position:relative;overflow-x:clip}
 .lay{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--u)*100);height:100%;pointer-events:none}
 section{position:relative}
-#s1{height:calc(var(--u)*230);background:#fff}
+#s1{height:calc(var(--u)*(230 + var(--d)));background:#fff}
 #s2{background:var(--red);color:#fff}
 #cubeblock{height:calc(var(--u)*112)}
 svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--u)*100);height:calc(var(--u)*342);overflow:visible;pointer-events:none}
@@ -43,6 +45,8 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .u{position:absolute}
 /* --- hero type --- */
 .hero{z-index:2}
+.lay.figs{top:calc(var(--u)*var(--d))}   /* top, not a transform: the girls must keep stacking between the two line layers */
+.hero .spark,.hero .deco{translate:0 calc(var(--u)*var(--d))}
 .title{position:absolute;left:max(calc(var(--u)*5), calc(var(--u)*50 - 50vw + 14px));top:calc(var(--u)*7);font-family:Anton,Impact,sans-serif;color:var(--red);
   font-size:calc(var(--u)*17.5);line-height:.82;letter-spacing:-.01em;transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
 .title span{display:block}
@@ -56,9 +60,9 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .bar{position:absolute;height:1px;background:var(--ink)}
 /* left-anchored hero text never leaves the screen on narrow phones */
 .edge{left:max(calc(var(--u)*5.6), calc(var(--u)*50 - 50vw + 16px))}
-.role{position:absolute;top:calc(var(--u)*37.4);font-family:Anton,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
+.role{position:absolute;top:calc(var(--u)*(37.4 + var(--d)));font-family:Anton,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
 /* facts, then the scroll hint, stacked so a taller list on phones pushes the hint down */
-.info{position:absolute;top:calc(var(--u)*42.8);display:flex;flex-direction:column;align-items:flex-start;gap:max(calc(var(--u)*1.6),12px)}
+.info{position:absolute;top:calc(var(--u)*(42.8 + var(--d)));display:flex;flex-direction:column;align-items:flex-start;gap:max(calc(var(--u)*1.6),12px)}
 .info .tag,.info .bar{position:static}
 .info .bar{width:calc(var(--u)*12);margin-top:calc(var(--u)*-.6)}
 .facts{display:grid;grid-template-columns:auto auto;column-gap:1.6em;row-gap:.6em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;font-variant-numeric:tabular-nums}
@@ -89,9 +93,11 @@ html.gated{overflow:hidden}
 .g-touch{display:none}
 @media (hover:none){.g-mouse{display:none}.g-touch{display:inline}}
 @media (prefers-reduced-motion: reduce){.snd.on .eq i,.gate .eq i{animation:none;height:70%}.gate{transition:none}}
-/* phones: decorative figure labels would land on the lines at this scale */
+/* phones: decorative figure labels would land on the lines at this scale; the name moves down into the room the lowered scene leaves */
 @media (max-width:700px){
   .tag.deco{display:none}
+  .title{top:calc(var(--u)*12)}
+  .facts{letter-spacing:.14em;column-gap:1.3em;row-gap:.75em}
 }
 /* --- girls --- */
 .girl{position:absolute;z-index:2;will-change:transform}
@@ -162,6 +168,13 @@ footer b{color:var(--red)}
 .np-bar{flex:1;height:3px;background:rgba(255,255,255,.18);position:relative}
 .np-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red)}
 @keyframes np-pulse{50%{opacity:.3}}
+/* phones: the plate a touch smaller */
+@media (max-width:700px){
+  .np-wrap{--npw:246px;--art:41px;--pad:7px;--lab:8.5px}
+  .np-song{font-size:14px}
+  .np-artist{font-size:10.5px}
+  .np-pre{display:none}
+}
 @media (prefers-reduced-motion: reduce){.reveal,.wg .inner,.np{transition:none}.np-dot{animation:none!important}}
 </style>
 </head>
@@ -213,7 +226,7 @@ footer b{color:var(--red)}
     <div class="tag deco" style="left:calc(var(--u)*76);top:calc(var(--u)*92)">fig. <b>a</b> — wall / floor</div>
     <div class="tag deco" style="left:calc(var(--u)*33);top:calc(var(--u)*177)">fig. <b>b</b> — cross</div>
   </div>
-  <div class="lay">
+  <div class="lay figs">
     <div class="girl echo" id="g4" data-par="-.06" style="left:calc(var(--u)*57);top:calc(var(--u)*1);width:calc(var(--u)*40)">
       <div class="shadow" id="g4sh"></div>
       <img src="assets/ref4.webp" alt="">
@@ -288,7 +301,9 @@ const V3 = {x:[1,0,0], y:[0,1,0], z:[0,0,1]};
 const proj = v => [v[0]*AX.x[0] + v[1]*AX.y[0] + v[2]*AX.z[0], v[0]*AX.x[1] + v[1]*AX.y[1] + v[2]*AX.z[1]];
 const parseDir = s => { const sg = s[0]==='-'?-1:1; const a = V3[s[1]]; return a.map(c=>c*sg); };
 const cross = (a,b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
-const BOUND = 230; // section 1 / 2 boundary in u
+const D = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--d')) || 0;
+document.documentElement.style.setProperty('--d', D);   // a phone turned sideways keeps the layout it loaded with, like the line routes
+const BOUND = 230 + D; // section 1 / 2 boundary in u
 
 /* ---------- line routes ----------
    seg: [direction, surfaceNormal, length, opts]
@@ -341,6 +356,11 @@ if (matchMedia('(max-width:1100px)').matches) {
   C.start = [q[0]-dx[0]*L1, q[1]-dx[1]*L1];
   C.segs = [['-x','y',L1], ['+z','y',L2], ...tail];
   C.boxes = [];
+}
+// phones: the scene starts D lower; lines that come from above the page just run longer
+for (const L of LINES) {
+  if (L.start[1] < 0 && L.segs[0][0] === '-y') L.segs[0][2] += D / Math.cos(PIT);
+  else L.start[1] += D;
 }
 const NS='http://www.w3.org/2000/svg';
 const lback=document.getElementById('lback'), lfront=document.getElementById('lfront');
@@ -412,7 +432,7 @@ function boxP(x,y,z){ const A = MAIN.topSeg.a, q = proj([x,y,z]); return [A[0]+q
 })();
 
 /* red cross behind girl 1: the beam is line C itself, the crossbar spreads out when the fill reaches it */
-const CL = LINES[2], CROSS = {cx:19.08, y0:94.34, y1:113.3, left:-90, right:57};
+const CL = LINES[2], CROSS = {cx:19.08, y0:94.34 + D, y1:113.3 + D, left:-90, right:57};
 const barShadow = mk('polygon',{fill:'var(--red-r)',transform:'translate(1.3 .9)'},lback._top);
 const bar = mk('polygon',{fill:'var(--red)'},lback._top);
 function drawCross(){
@@ -631,18 +651,13 @@ req();
    (without the entry screen: the first click or key). The quiet level is baked into the file, because iPhones ignore audio.volume;
    a new level bumps V, so no browser replays a cached louder copy. */
 (() => {
-  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=3';
+  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=4';
   // AAC wherever it is surely supported (Safari's WebM support varies by version), Opus otherwise; if one fails, the other stands in
   const files = ['assets/bg2.m4a', 'assets/bg2.webm'];
   if (audio.canPlayType('audio/mp4; codecs="mp4a.40.2"') !== 'probably') files.reverse();
   audio.src = files.shift() + V;
   audio.loop = true;
   audio.preload = 'auto';
-  // phones: the top line runs into the girl, so the switch moves next to the scroll hint, on clean paper
-  const top = btn.parentNode, hint = document.getElementById('hint'), narrow = matchMedia('(max-width:700px)');
-  const place = () => (narrow.matches ? hint : top).appendChild(btn);
-  narrow.addEventListener('change', place);
-  place();
   let want = true, fade = 0, wasPlaying = false;
   try { want = localStorage.getItem('sound') !== 'off'; } catch (e) {}
   const show = () => {
@@ -724,17 +739,19 @@ req();
     total.textContent = fmt(len);
   }
 
-  // t: { label, live, song, artist, art, url, start, end, frozen }, or { idle: line under "Nothing playing" }, or null while nothing is known
+  // t: { label, pre, live, song, artist, art, url, start, end, frozen }, or { idle: line under "Nothing playing" }, or null while nothing is known;
+  // pre is the start of the label that phones leave out ("Played " 5 min ago)
   function render(t) {
     clearInterval(timer); ts = null;
     const has = !!(t && t.song);
     np.classList.toggle('playing', has && !!t.live);
     if (has) {
       state.textContent = t.label;
+      if (t.pre) state.prepend(Object.assign(document.createElement('span'), { className: 'np-pre', textContent: t.pre }));
       song.textContent = t.song;
       artist.textContent = t.artist || '';
       setArt(t.art);
-      if (t.url) { song.href = t.url; song.setAttribute('aria-label', t.label + ' on Spotify: ' + t.song + (t.artist ? ' by ' + t.artist : '')); }
+      if (t.url) { song.href = t.url; song.setAttribute('aria-label', (t.pre || '') + t.label + ' on Spotify: ' + t.song + (t.artist ? ' by ' + t.artist : '')); }
       else { song.removeAttribute('href'); song.removeAttribute('aria-label'); }
       if (t.end > t.start) { ts = t; tick(); if (t.live) timer = setInterval(tick, 1000); }
     } else {
@@ -762,12 +779,18 @@ req();
   });
 
   /* ---------- Spotify through the Worker ---------- */
+  // "ago" is how long since the track last played, counted by the Worker so a visitor's clock can't skew it
+  const ago = ms => {
+    const m = Math.floor(ms / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
+    return m < 1 ? 'just now' : h < 1 ? `${m} min ago` : d < 1 ? `${h} h ago` : `${d} day${d > 1 ? 's' : ''} ago`;
+  };
   const fromSpotify = j => {
     if (!j.song) return { idle: '' };
     const t = { song: j.song, artist: j.artist, art: j.art, url: j.url }, now = Date.now();
+    const when = typeof j.ago === 'number' ? { label: ago(j.ago), pre: 'Played ' } : null;
     if (j.playing) return { ...t, label: 'Now playing', live: true, start: now - j.progress, end: now - j.progress + j.duration };
-    if (j.paused) return { ...t, label: 'Paused', start: 0, end: j.duration, frozen: j.progress };
-    return { ...t, label: 'Last played' };
+    if (j.paused) return { ...t, label: 'Paused', ...when, start: 0, end: j.duration, frozen: j.progress };
+    return { ...t, label: 'Last played', ...when };
   };
   const SURE = { setup: 1, auth: 1, premium: 1, forbidden: 1 };   // answers that will not fix themselves in a minute
   let mode = '', fails = 0, shown = null, sTimer = 0, lastAsk = 0, nextAt = 0, inView = true;
