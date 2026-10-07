@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{
   --red:#e3132b; --red-l:#c40f23; --red-r:#8f0a18;
@@ -43,13 +43,13 @@ section{position:relative}
 /* computers: a shorter red room; the floor line from the cube runs on into the wall, over the word GIRLS and behind the girls */
 @media (min-width:701px) and (min-aspect-ratio:4/5){#cubeblock{height:calc(var(--u)*88)} #stage #ring{z-index:5}}
 svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--u)*100);height:calc(var(--u)*342);overflow:visible;pointer-events:none}
-#lback{z-index:1} #lfront{z-index:3}
+#lback{z-index:1} #lfront{z-index:3} #lchart{z-index:2} #lknock{z-index:3}
 .u{position:absolute}
 /* --- hero type --- */
 .hero{z-index:2}
 .lay.figs{top:calc(var(--u)*var(--d))}   /* top, not a transform: the girls must keep stacking between the two line layers */
 .hero .spark,.hero .deco{translate:0 calc(var(--u)*var(--d))}
-.title{position:absolute;left:max(calc(var(--u)*5), calc(var(--u)*50 - 50vw + 14px));top:calc(var(--u)*7);font-family:Anton,Impact,sans-serif;color:var(--red);
+.title{position:absolute;left:max(calc(var(--u)*5), calc(var(--u)*50 - 50vw + 14px));top:calc(var(--u)*7);font-family:Anton,Oswald,Impact,sans-serif;color:var(--red);
   font-size:calc(var(--u)*17.5);line-height:.82;letter-spacing:-.01em;transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
 .title span{display:block}
 .title .ghost{color:transparent;-webkit-text-stroke:calc(var(--u)*.13) var(--red);margin-left:calc(var(--u)*7)}
@@ -62,7 +62,7 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .bar{position:absolute;height:1px;background:var(--ink)}
 /* left-anchored hero text never leaves the screen on narrow phones */
 .edge{left:max(calc(var(--u)*5.6), calc(var(--u)*50 - 50vw + 16px))}
-.role{position:absolute;top:calc(var(--u)*(37.4 + var(--d)));font-family:Anton,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
+.role{position:absolute;top:calc(var(--u)*(37.4 + var(--d)));font-family:Anton,Oswald,Impact,sans-serif;font-size:max(calc(var(--u)*3.6),18px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);transform:skewX(-9deg);transform-origin:left bottom;white-space:nowrap}
 /* facts, then the scroll hint, stacked so a taller list on phones pushes the hint down */
 .info{position:absolute;top:calc(var(--u)*(42.8 + var(--d)));display:flex;flex-direction:column;align-items:flex-start;gap:max(calc(var(--u)*1.6),12px)}
 .info .tag,.info .bar{position:static}
@@ -89,7 +89,7 @@ html.gated{overflow:hidden}
 .gate.out{clip-path:inset(0 0 100% 0);pointer-events:none}
 .gate .gtag{top:calc(var(--u)*3);left:max(calc(var(--u)*5.6),16px)}
 .gmid{display:flex;flex-direction:column;align-items:center;gap:max(calc(var(--u)*1.6),14px);padding:0 16px}
-.genter{font-family:Anton,Impact,sans-serif;font-size:clamp(40px,calc(var(--u)*8),128px);line-height:.9;letter-spacing:.01em;text-transform:uppercase;transform:skewX(-9deg);white-space:nowrap;transition:color .2s}
+.genter{font-family:Anton,Oswald,Impact,sans-serif;font-size:clamp(40px,calc(var(--u)*8),128px);line-height:.9;letter-spacing:.01em;text-transform:uppercase;transform:skewX(-9deg);white-space:nowrap;transition:color .2s}
 .genter:hover,.gate:focus-visible .genter{color:var(--red)}
 .ghint{display:flex;align-items:center;gap:.75em;font-size:max(calc(var(--u)*.85),10px);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
 .g-touch{display:none}
@@ -114,7 +114,7 @@ html.gated{overflow:hidden}
 #sitter img{width:100%;display:block;filter:drop-shadow(calc(var(--u)*-.8) calc(var(--u)*.5) 0 rgba(90,0,12,.35))}
 /* --- section 2 --- */
 .s2type{position:absolute;z-index:2}
-.big2{font-family:Anton,Impact,sans-serif;color:transparent;-webkit-text-stroke:calc(var(--u)*.12) rgba(255,255,255,.85);font-size:calc(var(--u)*13);line-height:.85;transform:skewX(-9deg);white-space:nowrap}
+.big2{font-family:Anton,Oswald,Impact,sans-serif;color:transparent;-webkit-text-stroke:calc(var(--u)*.12) rgba(255,255,255,.85);font-size:calc(var(--u)*13);line-height:.85;transform:skewX(-9deg);white-space:nowrap}
 #s2 .tag{color:#fff}
 #s2 .tag b{color:#fff;background:var(--ink);padding:0 .4em}
 #s2 .spark{color:#fff}
@@ -126,7 +126,7 @@ html.gated{overflow:hidden}
 /* phones: a shorter window onto the same scene, cut from the top so the girls keep their size */
 @media (max-aspect-ratio:4/5){#stage{height:min(100svh,128vw);min-height:0}#scene{top:-22vw}}
 #stage .floor{position:absolute;left:0;right:0;bottom:-8%;height:42%;background:linear-gradient(#b80d20,#7d0614);clip-path:polygon(0 24.3%,100% 24.3%,100% 100%,0 100%);will-change:transform}
-#stage .backword,#stage .bwred{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
+#stage .backword,#stage .bwred{position:absolute;left:50%;top:6%;transform:translateX(-50%) skewX(-9deg);font-family:Anton,Oswald,Impact,sans-serif;font-size:min(30vw,52vh);line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55);white-space:nowrap;letter-spacing:-.01em;will-change:transform}
 @media (max-aspect-ratio:4/5){#stage .backword{top:28%}}   /* phones: lower, behind the back row's heads */
 #ring{position:absolute;inset:0;z-index:1}
 /* where the white floor line passes over GIRLS, the letters' outline turns red: a red copy of the word, cut to the line's shape */
@@ -158,53 +158,96 @@ footer b{color:var(--red)}
 @media (max-width:700px){
   .about .tag{color:#fff;font-size:8.5px;letter-spacing:.14em;line-height:2}
   .about .tag b{color:#fff;background:var(--ink);padding:0 .4em}
-  .top3{left:calc(var(--u)*60.6);top:calc(var(--u)*(230 + var(--d) + 76))}
-  #cubeblock{height:calc(var(--u)*112 + 16px)}   /* a strip more red room, so the favourites clear the floor line on small phones */
+  /* the top 3 goes under the After Effects tile (about 205px tall) and past the end of the floor line (108u into the room) */
+  .top3{left:calc(var(--u)*60.6);top:max(calc(var(--u)*(230 + var(--d) + 108)),calc(var(--u)*(230 + var(--d) + 41) + 222px))}
+  #cubeblock{height:max(calc(var(--u)*108 + 84px),calc(var(--u)*41 + 306px),calc(var(--u)*112 + 16px))}   /* and the favourites still clear the floor line */
   .fav{left:max(calc(var(--u)*4),14px);top:calc(var(--u)*(230 + var(--d) + 112) - 52px)}
   .fav .hrs{display:block;padding-left:6.6em}
   .top3 i{color:rgba(255,255,255,.6);margin-right:1.1em}
   .top3 a{text-decoration-color:rgba(255,255,255,.4)}
   .top3 a:hover,.top3 a:focus-visible{color:#fff;text-decoration-color:#fff}
 }
-/* After Effects status: a white card, the counterpart of the black Spotify plate. Computers: at the end of the white room, in the frame the lines leave there */
-/* The middle vertical line (back line layer, x 47.35-49.27u at every width) runs over the card: the logo ends 0.15u under its left edge and the text starts
-   0.08u under its right edge, so the line just touches both. Everything here is in u, so that holds from 701px up. */
-.lay.aelay{z-index:0}   /* above the white section, under #lback */
-.ae-wrap{--aew:calc(var(--u)*36);--logo:calc(var(--u)*5.8);--pad:var(--u);--gap:calc(var(--u)*1.69);--lab:clamp(9px,calc(var(--u)*.72),14px);
-  position:absolute;width:var(--aew);left:calc(var(--u)*(47.5 - 5.8 - 1) - 1.5px);top:calc(var(--u)*214.5);pointer-events:auto}
-.ae{display:grid;grid-template-columns:var(--logo) minmax(0,1fr) auto;grid-template-areas:"logo label tc" "logo proj proj" "logo comp comp" "logo tl tl";column-gap:var(--gap);row-gap:3px;align-items:center;
-  padding:var(--pad) calc(var(--pad)*1.3) var(--pad) var(--pad);background:#fff;color:var(--ink);border:1.5px solid var(--ink);box-shadow:5px 5px 0 var(--ink);
-  font-family:'JetBrains Mono',ui-monospace,monospace;opacity:0;transform:translateY(14px);transition:opacity .7s ease .2s,transform .7s cubic-bezier(.2,.9,.25,1) .2s}
+/* After Effects status: a white card, the counterpart of the black Spotify plate, fed by Pavel's own AE plugin, with his hours in AE per day.
+   Computers: a big panel at the end of the white room (x 24.5-96u, y 197.5-229.5u). The left line runs behind it, the middle and right lines run over it,
+   and the middle line sprouts the week as bars (drawn with the lines: "week chart" in the line script). The text column sits left of the middle line. */
+.ae{position:relative;background:#fff;color:var(--ink);border:1.5px solid var(--ink);font-family:'JetBrains Mono',ui-monospace,monospace;
+  opacity:0;transform:translateY(14px);transition:opacity .7s ease .2s,transform .7s cubic-bezier(.2,.9,.25,1) .2s}
 .ae.in{opacity:1;transform:none}
-.ae-logo{grid-area:logo;display:block;width:var(--logo);height:var(--logo)}
-.ae-label{grid-area:label;display:flex;align-items:center;gap:6px;min-width:0;font-size:var(--lab);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);white-space:nowrap;overflow:hidden}
+.ae-logo{display:block;flex:none}
+.ae-head{display:flex;align-items:center;min-width:0}
+.ae-hd{display:grid;min-width:0}
+.ae-label{display:flex;align-items:center;gap:6px;min-width:0;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);white-space:nowrap;overflow:hidden}
 .ae-dot{width:6px;height:6px;border-radius:50%;background:#c9c0c4;flex:none}
 .ae.live .ae-dot{background:var(--red);animation:np-pulse 1.4s ease-in-out infinite}
-.ae-tc{grid-area:tc;font-size:var(--lab);letter-spacing:.1em;font-variant-numeric:tabular-nums;white-space:nowrap}
-.ae-proj{grid-area:proj;font-family:Anton,Impact,sans-serif;font-size:clamp(15px,calc(var(--u)*1.55),30px);line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ae-comp{grid-area:comp;font-size:clamp(11px,calc(var(--u)*.95),18px);color:#5d5458;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ae-tc{letter-spacing:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ae-proj{font-family:Anton,Oswald,Impact,sans-serif;letter-spacing:.02em;text-transform:uppercase;overflow-wrap:break-word}
+.ae-comp{color:#5d5458;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* a tiny timeline: three layer bars in After Effects label colours and a playhead that runs while he works */
-.ae-tl{grid-area:tl;position:relative;display:grid;gap:2px;margin-top:3px}
+.ae-tl{position:relative;display:grid;gap:2px}
 .ae-tl i{position:relative;display:block;height:3px;background:#f1ecee}
 .ae-tl i::after{content:"";position:absolute;top:0;bottom:0;left:var(--a,10%);width:var(--w,40%);background:var(--c,#9999ff)}
 .ae-tl b{position:absolute;top:-3px;bottom:-3px;left:calc(var(--p,1) * (100% - 2px));width:2px;background:var(--red)}
 .ae.live .ae-tl b{animation:ae-play 12s linear infinite}
 .ae.render .ae-tl b{animation-duration:2.4s}
 @keyframes ae-play{from{left:0}to{left:calc(100% - 2px)}}
-/* up to 1100px the card is too narrow for "Last in AE" */
-@media (max-width:1100px){.ae-pre{display:none}}
-/* phones: a narrow tile in the red room, right of the cube */
+/* the week: caption, total, and arrows to page back through every week the Worker has kept */
+.ae-week{display:grid;justify-items:start;row-gap:.9em}
+.ae-cap{letter-spacing:.18em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+.ae-nav{display:flex;align-items:center;gap:.5em;white-space:nowrap;letter-spacing:.1em;text-transform:uppercase}
+.ae-nav button{display:grid;place-items:center;width:2.2em;height:2.2em;padding:0;border:1px solid var(--ink);background:#fff;color:var(--ink);font:inherit;line-height:1;cursor:pointer;transition:background .2s,color .2s}
+.ae-nav button:hover:not(:disabled),.ae-nav button:focus-visible{background:var(--red);border-color:var(--red);color:#fff;outline:none}
+.ae-nav button:disabled{opacity:.25;cursor:default}
+.ae-nav svg{width:.9em;height:.9em}
+.ae-total{font-family:Anton,Oswald,Impact,sans-serif;line-height:1;white-space:nowrap}
+.ae-total small{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:max(.24em,8px);letter-spacing:.16em;text-transform:uppercase;margin-left:.5em;color:var(--mute);vertical-align:.3em}
+.ae-days{list-style:none;margin:0;padding:0}
+@media (min-width:701px){
+  .lay.aelay{z-index:2}      /* over the left line (#lback), under the middle and right ones (#lfront) */
+  .ae-wrap{position:absolute;left:calc(var(--u)*24.5);top:calc(var(--u)*197.5);width:calc(var(--u)*71.5);height:calc(var(--u)*32);pointer-events:auto}
+  .ae{height:100%;box-sizing:border-box;box-shadow:calc(var(--u)*.4) calc(var(--u)*.4) 0 var(--ink)}
+  .ae-side{position:absolute;left:calc(var(--u)*1.5);top:calc(var(--u)*1.9);bottom:calc(var(--u)*1.9);width:calc(var(--u)*17.3);display:flex;flex-direction:column;gap:calc(var(--u)*.75)}
+  .ae-head{gap:calc(var(--u)*1.1)}
+  .ae-logo{width:calc(var(--u)*5.6);height:calc(var(--u)*5.6)}
+  .ae-hd{row-gap:calc(var(--u)*.35)}
+  .ae-label{font-size:clamp(8px,calc(var(--u)*.66),13px)}
+  .ae-tc{font-size:clamp(11px,calc(var(--u)*1.3),26px)}
+  .ae-proj{margin-top:calc(var(--u)*.7);font-size:clamp(14px,calc(var(--u)*2.5),48px);line-height:1.04;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ae-comp{font-size:clamp(10px,calc(var(--u)*.88),17px)}
+  .ae-tl{margin-top:calc(var(--u)*.2)}
+  .ae-week{margin-top:auto;font-size:clamp(8px,calc(var(--u)*.66),13px)}
+  .ae-total{font-size:clamp(20px,calc(var(--u)*3.2),62px)}
+  .ae-days{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}   /* computers draw the bars with the lines; this list is for screen readers */
+}
+/* up to 1100px the column is too narrow for "Last in AE" and the caption's tail */
+@media (max-width:1100px){.ae-pre,.ae-cap i{display:none}}
+@media (min-width:701px) and (max-width:1000px){.ae-side{width:calc(var(--u)*16.8)}.ae-tc{font-size:10px}}
+/* phones: a narrow tile in the red room, right of the cube; the week is a row of seven little columns */
 @media (max-width:700px){
   .lay.aelay{z-index:4}
-  .ae-wrap{--logo:24px;--pad:8px;--gap:9px;--lab:8px;width:auto;left:calc(var(--u)*59);right:12px;top:calc(var(--u)*(230 + var(--d) + 41))}
-  .ae{grid-template-columns:var(--logo) minmax(0,1fr);grid-template-areas:"logo label" "tc tc" "proj proj" "comp comp" "tl tl";row-gap:3px;border-width:1px;box-shadow:4px 4px 0 var(--ink)}
-  .ae-label{letter-spacing:.1em;gap:5px}
-  .ae-tc{font-size:12px;letter-spacing:.04em;margin-top:2px}
-  .ae-proj{font-size:14px}
+  .ae-wrap{position:absolute;left:calc(var(--u)*59);right:12px;top:calc(var(--u)*(230 + var(--d) + 41));pointer-events:auto}
+  .ae{padding:8px 10px 9px 8px;border-width:1px;box-shadow:4px 4px 0 var(--ink)}
+  .ae-side{display:grid;row-gap:3px}
+  .ae-head{display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:9px;align-items:center}
+  .ae-logo{width:24px;height:24px}
+  .ae-hd{display:contents}
+  .ae-label{font-size:8px;letter-spacing:.1em;gap:5px}
+  .ae-tc{grid-column:1/-1;font-size:12px;letter-spacing:.04em;margin-top:2px}
+  .ae-proj{font-size:14px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .ae-comp{font-size:9px}
-  .ae-pre{display:none}
+  .ae-tl{margin-top:3px}
+  .ae-week{margin-top:7px;font-size:7.5px;row-gap:5px}
+  .ae-cap{display:none}
+  .ae-nav{gap:4px;letter-spacing:.04em}
+  .ae-nav button{width:16px;height:16px}
+  .ae-total{font-size:15px}
+  .ae-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:7px;height:38px;align-items:end}
+  .ae-days li{display:grid;grid-template-rows:1fr auto;height:100%;font-size:7px;text-align:center;color:var(--mute)}
+  .ae-days i{align-self:end;display:block;height:calc(var(--h,0) * 100%);min-height:1px;background:var(--red);box-shadow:1.5px 1.5px 0 var(--red-r);transition:height .5s cubic-bezier(.2,.9,.25,1)}
+  .ae-days b{font-weight:400;margin-top:2px}
+  .ae-days li.today b{color:var(--red);font-weight:700}
+  .ae-days span{display:none}
 }
-@media (prefers-reduced-motion: reduce){.ae{transition:none}.ae-dot,.ae-tl b{animation:none!important}}
+@media (prefers-reduced-motion: reduce){.ae{transition:none}.ae-dot,.ae-tl b{animation:none!important}.ae-days i{transition:none}}
 /* now playing (Spotify, with Discord presence as a stand-in): a plate under the gun girl that hides where she fades out */
 .np-wrap{--npw:clamp(272px,calc(var(--u)*32.5),640px);--art:clamp(46px,calc(var(--u)*4.6),80px);--pad:clamp(8px,calc(var(--u)*.8),15px);--lab:clamp(9px,calc(var(--u)*.62),11px);
   position:absolute;z-index:4;width:var(--npw);pointer-events:auto;will-change:transform;
@@ -224,7 +267,7 @@ footer b{color:var(--red)}
 /* small button to the Spotify profile, sits above the card-wide track link */
 .np-prof{position:relative;z-index:1;flex:none;margin-left:auto;padding:.45em .65em .4em;border:1px solid rgba(255,255,255,.32);color:#fff;text-decoration:none;font-size:var(--lab);line-height:1;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;transition:background .2s,border-color .2s}
 .np-prof:hover,.np-prof:focus-visible{background:var(--red);border-color:var(--red);outline:none}
-.np-song{display:block;color:inherit;text-decoration:none;font-family:Anton,Impact,sans-serif;font-size:clamp(15px,calc(var(--u)*1.3),23px);line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-song{display:block;color:inherit;text-decoration:none;font-family:Anton,Oswald,Impact,sans-serif;font-size:clamp(15px,calc(var(--u)*1.3),23px);line-height:1.15;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .np-song[href]::after{content:"";position:absolute;inset:0}
 .np-song:focus-visible{outline:none}
 .np:has(.np-song:focus-visible){outline:2px solid var(--red);outline-offset:3px}
@@ -327,7 +370,7 @@ footer b{color:var(--red)}
     <div class="spark" style="left:calc(var(--u)*47);top:calc(var(--u)*30);transform:scale(.6)"></div>
     <div class="spark" style="left:calc(var(--u)*8);top:calc(var(--u)*112)"></div>
     <div class="spark" style="left:calc(var(--u)*88);top:calc(var(--u)*128);transform:scale(.7)"></div>
-    <div class="spark" style="left:calc(var(--u)*40);top:calc(var(--u)*196);transform:scale(.8)"></div>
+    <div class="spark" style="left:calc(var(--u)*13);top:calc(var(--u)*209);transform:scale(.8)"></div>
     <div class="tag edge deco" style="top:calc(var(--u)*222)">02 / <b>red room</b></div>
   </div>
   <div class="lay figs">
@@ -419,16 +462,32 @@ footer b{color:var(--red)}
      Its own layer: on computers it sits under the line layers, so the middle red line runs over the card between the logo and the text -->
 <div class="lay aelay">
   <div class="ae-wrap" id="aew" hidden>
-    <div class="ae" id="ae" role="status">
-      <img class="ae-logo" src="assets/ae-logo.webp" alt="" width="264" height="264">
-      <span class="ae-label"><i class="ae-dot"></i><span id="ae-state">After Effects</span></span>
-      <span class="ae-tc" id="ae-tc"></span>
-      <span class="ae-proj" id="ae-proj"></span>
-      <span class="ae-comp" id="ae-comp"></span>
-      <span class="ae-tl" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
+    <div class="ae" id="ae">
+      <div class="ae-side" role="status">
+        <div class="ae-head">
+          <img class="ae-logo" src="assets/ae-logo.webp" alt="" width="264" height="264">
+          <div class="ae-hd"><span class="ae-label"><i class="ae-dot"></i><span id="ae-state">After Effects</span></span><span class="ae-tc" id="ae-tc"></span></div>
+        </div>
+        <span class="ae-proj" id="ae-proj"></span>
+        <span class="ae-comp" id="ae-comp"></span>
+        <span class="ae-tl" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
+        <div class="ae-week">
+          <span class="ae-cap" id="ae-cap">Hours in AE<i> · per day</i></span>
+          <span class="ae-total" id="ae-total"></span>
+          <div class="ae-nav">
+            <button type="button" id="ae-prev" aria-label="Previous week"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M6.5 1.5 3 5l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+            <span id="ae-range"></span>
+            <button type="button" id="ae-next" aria-label="Next week"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 1.5 7 5 3.5 8.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <ol class="ae-days" id="ae-days" aria-label="Hours in After Effects per day"></ol>
     </div>
   </div>
 </div>
+<!-- the week chart on computers: bars between the panel and the front lines, and on top the white pieces where a line crosses a bar, with the labels -->
+<svg class="lines" id="lchart" viewBox="0 0 100 342" preserveAspectRatio="xMinYMin meet" aria-hidden="true"></svg>
+<svg class="lines" id="lknock" viewBox="0 0 100 342" preserveAspectRatio="xMinYMin meet" aria-hidden="true"></svg>
 </div>
 
 <script>
@@ -506,6 +565,14 @@ if (matchMedia('(max-width:1100px)').matches) {
 // computers: the red room is shorter and the floor line from the cube runs on over GIRLS, out past the right edge
 const WALLUP = matchMedia('(min-width:701px) and (min-aspect-ratio:4/5)').matches;
 if (WALLUP) LINES[0].segs[LINES[0].segs.length - 1][2] = 125;
+// computers: the After Effects panel sits between the line layers, so the lower parts of the middle and right lines move to the front layer,
+// and their shapes are copied into the week chart's clip (knock), where they turn the bars white
+const CHART = !matchMedia('(max-width:700px)').matches;
+if (CHART) {
+  const a = LINES[0].segs.find(sg => sg[0] === '-y' && sg[2] === 73);
+  a[3] = {...(a[3] || {}), front:1, knock:1, axis:1};
+  for (const sg of LINES[4].segs.slice(-4, -1)) sg[3] = {...(sg[3] || {}), front:1, knock:1};
+}
 // phones: the scene starts D lower; lines that come from above the page just run longer
 for (const L of LINES) {
   if (L.start[1] < 0 && L.segs[0][0] === '-y') L.segs[0][2] += D / Math.cos(PIT);
@@ -523,6 +590,8 @@ for (const svg of [lback,lfront]) {
   svg._bot = mk('g',{'clip-path':`url(#${svg.id}-cb)`},svg);
 }
 const COL = { top:{y:'var(--red)', z:'var(--red-l)', x:'var(--red-r)'}, bot:{y:'var(--wh-t)', z:'var(--wh-l)', x:'var(--wh-r)'} };
+const lchart = document.getElementById('lchart'), lknock = document.getElementById('lknock');
+const kclip = mk('clipPath',{id:'kclip'}, mk('defs',{},lknock)), knocks = [];
 
 /* build geometry */
 for (const L of LINES) {
@@ -540,6 +609,8 @@ for (const L of LINES) {
     if (o.shadow) seg.ps = mk('polygon',{fill:'var(--red-r)',transform:`translate(${o.shadow[0]} ${o.shadow[1]})`},svg._top);
     seg.pt = mk('polygon',{fill:o.fill||COL.top[s[1]]},svg._top);
     seg.pb = mk('polygon',{fill:COL.bot[s[1]]},svg._bot);
+    if (o.knock) { seg.kp = mk('polygon',{},kclip); knocks.push(seg); }
+    if (o.axis) L.axisSeg = seg;
     return seg;
   });
   L.S.forEach((s,i) => {
@@ -607,7 +678,7 @@ function draw(L){
   for (const s of L.S) {
     const t = Math.max(0, Math.min(1, (L.D - s.c)/s.len));
     const pts = t>0 ? quad(s,t) : '';
-    if (s._last !== pts) { s.pt.setAttribute('points',pts); s.pb.setAttribute('points',pts); if (s.ps) s.ps.setAttribute('points',pts); s._last = pts; }
+    if (s._last !== pts) { s.pt.setAttribute('points',pts); s.pb.setAttribute('points',pts); if (s.ps) s.ps.setAttribute('points',pts); if (s.kp) s.kp.setAttribute('points',pts); s._last = pts; }
   }
   for (const g of L.ghosts) {
     const t = Math.max(0, Math.min(1, (L.D - g.c)/g.len));
@@ -620,6 +691,72 @@ function drawCube(){
   if (t<=0) { rf.setAttribute('points',''); return; }
   const w=BW/2, h=-BH*t;
   rf.setAttribute('points',[boxP(w,0,0),boxP(w,0,BW),boxP(w,h,BW),boxP(w,h,0)].map(p=>p.map(f2).join(',')).join(' '));
+}
+
+/* ---------- After Effects week chart (computers) ----------
+   The middle line sprouts one bar per day of Pavel's week as its draw passes each row, the way the cross spreads out of line C.
+   A bar's length is that day's hours, scaled so the week's longest day ends at x1, past the right line. Where a bar runs under a line
+   in front of it, that piece turns white: white copies of the bars, clipped to those lines' shapes. The AE script hands the week in
+   through window.aeWeekChart({hours:[7], today, upto, names}) or null. */
+const CH = {x0:47.35, x1:90.5, y0:200.5, step:4, h:2};
+const knockG = mk('g',{'clip-path':'url(#kclip)'}, lknock);
+const labG = mk('g',{'font-family':"'JetBrains Mono',ui-monospace,monospace",'letter-spacing':'.08em'}, lknock);
+const bars = [0,1,2,3,4,5,6].map(i => {
+  const y = CH.y0 + i*CH.step, r = (g, fill, tr) => mk('rect',{x:CH.x0, y, width:0, height:CH.h, fill, ...(tr ? {transform:tr} : {})}, g);
+  return { y, sh:r(lchart,'var(--red-r)','translate(.45 .35)'), br:r(lchart,'var(--red)'), wk:r(knockG,'#fff'),
+    day: mk('text',{x:46.65, y:y+CH.h/2, dy:'.36em', 'text-anchor':'end', fill:'var(--mute)'}, labG),
+    val: mk('text',{x:CH.x0, y:y+CH.h/2, dy:'.36em', fill:'var(--ink)', 'font-weight':700, opacity:0}, labG),
+    cur:0, tgt:0 };
+});
+let week = null;
+window.aeWeekChart = w => {
+  week = CHART ? w : null;
+  const max = week ? Math.max(...week.hours, 0) : 0, k = max > 0 ? (CH.x1 - CH.x0) / max : 0;
+  bars.forEach((b, i) => {
+    const on = week && i <= week.upto;
+    b.tgt = on ? week.hours[i]*k : 0;
+    b.day.textContent = week ? week.names[i] : '';
+    b.day.setAttribute('fill', week && i === week.today ? 'var(--red)' : on ? 'var(--ink)' : '#c9c0c4');
+    b.day.setAttribute('font-weight', week && i === week.today ? 700 : 400);
+    b.val.textContent = on ? week.labels[i] : '';
+  });
+  req();
+};
+// where the front lines cross a row: x ranges of their drawn shapes at height y
+function crossings(y){
+  const out = [];
+  for (const s of knocks) {
+    if (!s._last) continue;
+    const P = s._last.split(' ').map(q => q.split(',').map(Number));
+    let lo = 1e9, hi = -1e9;
+    for (let j = 0; j < P.length; j++) {
+      const [ax, ay] = P[j], [bx, by] = P[(j+1) % P.length];
+      if ((ay - y)*(by - y) > 0 || ay === by) continue;
+      const x = ax + (bx - ax)*(y - ay)/(by - ay); lo = Math.min(lo, x); hi = Math.max(hi, x);
+    }
+    if (hi > lo) out.push([lo, hi]);
+  }
+  return out;
+}
+let labFs = 1;
+function drawChart(){
+  if (!CHART) return false;
+  const sA = MAIN.axisSeg, t = Math.max(0, Math.min(1, (MAIN.D - sA.c)/sA.len)), tip = sA.a[1] + (sA.b[1] - sA.a[1])*t;
+  let moving = false;
+  for (const b of bars) {
+    const d = b.tgt - b.cur;
+    if (Math.abs(d) > .02) { b.cur += d*.14; moving = true; } else b.cur = b.tgt;
+    const g = Math.max(0, Math.min(1, (tip - b.y)/4)), e = 1 - Math.pow(1 - g, 3), len = week ? b.cur*e : 0, w = len.toFixed(2);
+    if (b._w !== w) { b.br.setAttribute('width', w); b.sh.setAttribute('width', w); b.wk.setAttribute('width', w); b._w = w; }
+    // the hours just past the bar's end, moved clear of a line that crosses the row there
+    let x = CH.x0 + len + .7;
+    const wl = b.val.textContent.length*labFs*.62, yc = b.y + CH.h/2;
+    for (const [lo, hi] of [...crossings(yc - labFs*.6), ...crossings(yc + labFs*.6)]) if (x < hi + .35 && x + wl > lo - .35) x = hi + .5;
+    const xs = x.toFixed(2), op = week && b.val.textContent ? Math.max(0, Math.min(1, (e - .5)*2)).toFixed(2) : '0';
+    if (b._x !== xs) { b.val.setAttribute('x', xs); b._x = xs; }
+    if (b._op !== op) { b.val.setAttribute('opacity', op); b._op = op; }
+  }
+  return moving;
 }
 
 /* ---------- scroll -> drawn length ---------- */
@@ -636,7 +773,7 @@ function targetD(L, sy, vh){
   return D;
 }
 let upx = 1, ticking = false;
-function measure(){ upx = lback.getBoundingClientRect().width/100; }
+function measure(){ upx = lback.getBoundingClientRect().width/100; labFs = Math.max(.66, 9/upx); labG.setAttribute('font-size', labFs.toFixed(3)); }
 const gated = () => document.documentElement.classList.contains('gated');
 function frame(){
   ticking = false;
@@ -652,6 +789,7 @@ function frame(){
   drawCube();
   drawCross();
   if (WALLUP) clipWord();
+  if (drawChart()) moving = true;
   parallax(sy, vh);
   if (wall(sy, vh)) moving = true;
   if (moving) req();
@@ -907,6 +1045,46 @@ req();
     const m = Math.floor(ms / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
     return m < 1 ? 'just now' : h < 1 ? `${m} min ago` : d < 1 ? `${h} h ago` : `${d} day${d > 1 ? 's' : ''} ago`;
   };
+  // the week: the Worker keeps Pavel's minutes in AE per day of his time (UTC+8); the panel shows Monday to Sunday and pages back week by week
+  const HOURS_URL = AE_URL + '/hours', DAY = 864e5, TZ = 8 * 3600e3;
+  const NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const prevB = $('ae-prev'), nextB = $('ae-next'), range = $('ae-range'), total = $('ae-total'), list = $('ae-days');
+  let days = {}, back = 0, hoursAt = 0;
+  const today = () => Math.floor((Date.now() + TZ) / DAY);                       // Pavel's day number
+  const mondayOf = n => n - (new Date(n * DAY).getUTCDay() + 6) % 7;
+  const iso = n => new Date(n * DAY).toISOString().slice(0, 10);
+  const dmy = n => { const d = new Date(n * DAY); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]; };
+  const hrs = h => h <= 0 ? '0' : h < 9.95 ? h.toFixed(1) : String(Math.round(h));
+  function oldest() {                                                             // how many weeks back the first counted day is
+    const first = Object.keys(days).filter(k => days[k] > 0).sort()[0];
+    return first ? Math.max(0, (mondayOf(today()) - mondayOf(Math.floor(Date.parse(first + 'T00:00:00Z') / DAY))) / 7) : 0;
+  }
+  function showWeek() {
+    if (!shown) { if (window.aeWeekChart) window.aeWeekChart(null); return; }
+    back = Math.min(back, oldest());
+    const t = today(), m0 = mondayOf(t) - back * 7, upto = back ? 6 : t - m0, ti = back ? -1 : t - m0;
+    const h = NAMES.map((_, i) => (days[iso(m0 + i)] || 0) / 60), sum = h.reduce((a, b) => a + b, 0), max = Math.max(...h);
+    range.textContent = dmy(m0) + ' – ' + dmy(m0 + 6);
+    total.innerHTML = `${hrs(sum)}<small>h ${back ? 'that week' : 'this week'}</small>`;
+    prevB.disabled = back >= oldest(); nextB.disabled = back <= 0;
+    list.innerHTML = '';
+    NAMES.forEach((n, i) => {
+      const li = document.createElement('li');
+      if (i === ti) li.className = 'today';
+      li.style.setProperty('--h', i <= upto && max ? h[i] / max : 0);
+      li.innerHTML = `<i></i><b aria-hidden="true">${n[0]}</b><span>${n}${i <= upto ? ': ' + hrs(h[i]) + ' h' : ''}</span>`;
+      list.append(li);
+    });
+    if (window.aeWeekChart) window.aeWeekChart({ hours: h, labels: h.map(hrs), names: NAMES.map(n => n.toUpperCase()), today: ti, upto });
+  }
+  prevB.addEventListener('click', () => { back++; showWeek(); });
+  nextB.addEventListener('click', () => { back = Math.max(0, back - 1); showWeek(); });
+  async function askHours() {
+    hoursAt = Date.now();
+    try { const j = await (await fetch(HOURS_URL, { cache: 'no-store' })).json(); if (j && j.ok && j.days) days = j.days; }
+    catch (e) { /* not there yet (the Worker without /ae/hours answers with its setup page): an empty week */ }
+    showWeek();
+  }
   const COLORS = ['#9999ff', '#e3132b', '#141014', '#45c2b6', '#f2a541'];
   // the layer bars come from the project name, so each project draws its own little timeline
   function lanesFor(name) {
@@ -934,9 +1112,11 @@ req();
   if (document.fonts) document.fonts.ready.then(fit);
   function render(j) {
     cancelAnimationFrame(raf);
-    if (!j || !j.ok || !j.state || j.state === 'none') { wrap.hidden = true; shown = null; return; }
+    if (!j || !j.ok || !j.state || j.state === 'none') { wrap.hidden = true; shown = null; showWeek(); return; }
+    const first = !shown;
     shown = j;
     wrap.hidden = false;
+    if (first) showWeek();
     const live = j.state === 'live' || j.state === 'render';
     card.classList.toggle('live', live);
     card.classList.toggle('render', j.state === 'render');
@@ -960,6 +1140,8 @@ req();
     let j = null;
     try { j = await (await fetch(AE_URL, { cache: 'no-store' })).json(); } catch (e) { /* offline: keep what is shown */ }
     if (j && (j.ok || j.reason === 'setup')) render(j);
+    // the hours: once, then every five minutes while he works and the panel is in view
+    if (shown && (!hoursAt || (near && (shown.state !== 'off') && Date.now() - hoursAt > 300000))) askHours();
     timer = setTimeout(ask, document.hidden ? 120000 : near ? 20000 : 60000);
   }
   // reveal like the Spotify plate, and only count frames while the card is on screen
@@ -971,7 +1153,12 @@ req();
   else card.classList.add('in');
   document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(raf); else ask(); });
   if (/full/.test(location.search)) card.classList.add('in');
-  if (location.hash === '#demo') render({ ok: true, state: 'live', project: 'alaska_edit_v3.aep', comp: 'MAIN', layers: 24, rq: [0, 0], elapsed: 5025000 });
+  if (location.hash === '#demo') {
+    // three weeks of made-up hours, so the chart can be seen without the Worker
+    const t = today(); days = {};
+    for (let n = mondayOf(t) - 14; n <= t; n++) days[iso(n)] = Math.round(60 * Math.max(0, 2.2 + 4 * Math.sin(n * 1.7) + 2.5 * Math.cos(n * .6)));
+    render({ ok: true, state: 'live', project: 'alaska_edit_v3.aep', comp: 'MAIN', layers: 24, rq: [0, 0], elapsed: 5025000 });
+  }
   else ask();
 })();
 </script>
