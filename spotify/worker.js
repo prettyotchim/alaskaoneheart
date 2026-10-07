@@ -5,6 +5,7 @@
      GET  /pv/<id>    the 30-second preview of a Spotify track (Deezer by ISRC, else Spotify's embed page), passed through with CORS
      GET  /ae         After Effects status: { ok, state: live | render | off | none, project, comp, layers, rq, elapsed, session, ago }
      POST /ae         heartbeat from Pavel's After Effects plugin (ae-plugin/ in the site repo)
+     GET  /ae/hours   minutes After Effects was open, per day of Pavel's time (UTC+8): { ok, days: { 'YYYY-MM-DD': minutes } }
      GET  /           setup checklist
      GET  /login      Spotify consent screen, which returns to /callback and prints the refresh token once
    Secrets (Worker > Settings > Variables and Secrets, type Secret): SPOTIFY_SECRET, SPOTIFY_REFRESH.
@@ -25,6 +26,7 @@ export default {
     if (url.pathname.startsWith('/art/')) return art(url.pathname.slice(5));
     if (url.pathname.startsWith('/pv/')) return preview(req, url, url.pathname.slice(4));
     if (url.pathname === '/ae') return req.method === 'POST' ? aePost(req, env) : aeGet(env);
+    if (url.pathname === '/ae/hours') return aeHours(env);
     if (url.pathname === '/login') return login(redirect);
     if (url.pathname === '/callback') return callback(req, url, env, redirect);
     return home(url, env, redirect);
@@ -169,7 +171,10 @@ const sameTrack = (t, artists, song) => alike(plain(t.title_short || t.title), p
 // Pavel's AE plugin reports every 30 seconds while After Effects is open; quiet for LIVE ms means he closed it.
 // The first plugin to report sets the token; to move the card to another computer, delete the row ae_token in the D1 console.
 const LIVE = 75000;
-let tableReady = false, aeRec = null, aeRecAt = 0;
+// Every heartbeat also adds the time since the previous one to the day it fell on (rows h:YYYY-MM-DD, ms, Pavel's day in UTC+8),
+// so the site can chart his hours in AE week by week. A silence longer than GAP (sleep, crash) is not counted.
+const GAP = 120000, TZ = 8 * 3600e3, DAY = 864e5;
+let tableReady = false, aeRec = null, aeRecAt = 0, hoursOut = null, hoursAt = 0;
 
 async function kv(env) {
   if (!tableReady) { await env.DB.prepare('CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL)').run(); tableReady = true; }
@@ -194,6 +199,17 @@ async function aePost(req, env) {
   let since = +b.since || now;
   if (since > now + 60000 || since < now - 7 * 864e5) since = now;
   const rq = Array.isArray(b.rq) ? [int(b.rq[0]), int(b.rq[1])] : [0, 0];
+  let prev = {};
+  try { prev = JSON.parse((await store.get('ae')) || '{}') || {}; } catch (e) {}
+  let from = 0;
+  if (prev.at && !prev.quit && now - prev.at <= GAP && since <= prev.at) from = prev.at;    // the same session, beating steadily
+  else if (since > (prev.at || 0)) from = Math.max(since, now - GAP);                        // a new session: count from its start
+  for (let a = from; a && a < now;) {                                                         // split at Pavel's midnights
+    const day = Math.floor((a + TZ) / DAY), b2 = Math.min(now, (day + 1) * DAY - TZ);
+    await env.DB.prepare('INSERT INTO kv (k, v) VALUES (?1, ?2) ON CONFLICT(k) DO UPDATE SET v = CAST(v AS INTEGER) + ?2')
+      .bind('h:' + new Date(day * DAY).toISOString().slice(0, 10), Math.round(b2 - a)).run();
+    a = b2;
+  }
   aeRec = { project: str(b.project, 120), comp: str(b.comp, 120), layers: int(b.layers), rendering: !!b.rendering, rq, since, at: now, quit: !!b.quit };
   aeRecAt = now;
   await store.set('ae', JSON.stringify(aeRec));
@@ -214,6 +230,21 @@ async function aeGet(env) {
   if (live) out.elapsed = Math.max(0, t - r.since);
   else { out.ago = Math.max(0, t - r.at); out.session = Math.max(0, r.at - r.since); }
   return json(out);
+}
+
+async function aeHours(env) {
+  if (!env.DB) return json({ ok: false, reason: 'setup' });
+  const t = Date.now();
+  if (!hoursOut || t - hoursAt > 60000) {
+    try {
+      await kv(env);
+      const { results } = await env.DB.prepare("SELECT k, v FROM kv WHERE k LIKE 'h:%'").all();
+      const days = {};
+      for (const r of results || []) days[r.k.slice(2)] = Math.round(parseInt(r.v, 10) / 60000);
+      hoursOut = { ok: true, days }; hoursAt = t;
+    } catch (e) { return json({ ok: false, reason: 'error', message: e.message }); }
+  }
+  return json(hoursOut);
 }
 
 /* ---------- one-time setup ---------- */
