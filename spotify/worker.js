@@ -48,13 +48,43 @@ async function now(env) {
   return json(out);
 }
 
+// What the Worker last saw on Pavel's player (kept in D1 when it is bound). Spotify sometimes names no track for a while even though
+// music plays (an "unknown" playback type), and its listening history can lag by hours, so without this the plate jumped back to an old track.
+let seen = null, seenSaved = 0;
+
 async function read(env) {
-  const cur = await api(env, '/me/player/currently-playing?additional_types=episode');
-  if (cur && cur.item) return { ok: true, playing: !!cur.is_playing, paused: !cur.is_playing, ...track(cur.item), progress: cur.progress_ms || 0, changed_at: cur.timestamp || 0 };
-  // nothing on right now: show the last track instead
+  const cur = await api(env, '/me/player/currently-playing?additional_types=episode'), t = Date.now();
+  if (cur && cur.item) {
+    const out = { ok: true, playing: !!cur.is_playing, paused: !cur.is_playing, ...track(cur.item), progress: cur.progress_ms || 0, changed_at: cur.timestamp || 0 };
+    await remember(env, out, t);
+    return out;
+  }
+  const s = seen && t - seen.at < 60000 ? seen : (await recall(env)) || seen;
+  // no track named, or a short "nothing playing" while music runs: keep the track it was playing until that track would end
+  if (s && s.playing && !(cur && cur.is_playing === false)) {
+    const progress = s.progress + (t - s.at);
+    if (progress < s.track.duration + 5000) return { ok: true, playing: true, ...s.track, progress: Math.min(progress, s.track.duration), changed_at: s.changed_at };
+  }
+  // nothing on right now: the last track, whichever is newer of what the Worker saw and Spotify's history
   const rec = await api(env, '/me/player/recently-played?limit=1').catch(() => null);
   const it = rec && rec.items && rec.items[0];
+  const end = !s ? 0 : s.playing ? Math.min(t, s.at + Math.max(0, s.track.duration - s.progress)) : s.changed_at || s.at;
+  if (s && (!it || !it.track || end > Date.parse(it.played_at))) return { ok: true, playing: false, last: true, ...s.track, played_at: new Date(end).toISOString() };
   return it && it.track ? { ok: true, playing: false, last: true, ...track(it.track), played_at: it.played_at } : { ok: true, playing: false };
+}
+
+async function remember(env, o, t) {
+  const changed = !seen || seen.track.id !== o.id || seen.playing !== o.playing;
+  seen = { track: { song: o.song, artist: o.artist, art: o.art, url: o.url, id: o.id, isrc: o.isrc, duration: o.duration }, playing: o.playing, progress: o.progress, changed_at: o.changed_at, at: t };
+  if (env.DB && (changed || t - seenSaved > 60000)) {
+    seenSaved = t;
+    try { await (await kv(env)).set('sp_seen', JSON.stringify(seen)); } catch (e) { /* the plate still works from memory */ }
+  }
+}
+
+async function recall(env) {
+  if (!env.DB) return null;
+  try { const v = JSON.parse((await (await kv(env)).get('sp_seen')) || 'null'); if (v && v.track && (!seen || v.at > seen.at)) seen = v; return seen; } catch (e) { return null; }
 }
 
 function track(it) {
