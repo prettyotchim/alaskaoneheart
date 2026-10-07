@@ -627,11 +627,11 @@ req();
 })();
 </script>
 <script>
-/* background music: quiet and looped. It starts at once if the browser allows sound, otherwise on the first tap, click or key press.
-   The quiet level is baked into the file, because iPhones ignore audio.volume. */
+/* background music: quiet and looped. It starts at once if the browser allows sound, otherwise with the click on the entry screen.
+   The quiet level is baked into the file, because iPhones ignore audio.volume; a new level gets a new file name, so no browser replays a cached louder copy. */
 (() => {
   const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio();
-  audio.src = audio.canPlayType('audio/webm; codecs="opus"') ? 'assets/bg.webm' : 'assets/bg.m4a';
+  audio.src = audio.canPlayType('audio/webm; codecs="opus"') ? 'assets/bg2.webm' : 'assets/bg2.m4a';
   audio.loop = true;
   audio.preload = 'auto';
   // phones: the top line runs into the girl, so the switch moves next to the scroll hint, on clean paper
