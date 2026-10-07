@@ -138,6 +138,29 @@ html.gated{overflow:hidden}
 #stage .hud{position:absolute;inset:0;pointer-events:none;z-index:50}
 footer{position:relative;background:var(--ink);color:#fff;padding:calc(var(--u)*2.2) max(calc(var(--u)*4),16px);display:flex;flex-wrap:wrap;gap:1em;justify-content:space-between;font-size:max(calc(var(--u)*.85),9px);letter-spacing:.18em;text-transform:uppercase}
 footer b{color:var(--red)}
+/* --- about Pavel: quiet tags like the figure labels, positioned on the whole page --- */
+.lay.about{z-index:4}
+.about .tag{line-height:2.1}
+.fav{left:calc(var(--u)*12);top:calc(var(--u)*185)}
+.top3{left:calc(var(--u)*66.5);top:calc(var(--u)*94)}
+.top3 ol{list-style:none}
+.top3 i{font-style:normal;color:var(--mute);margin-right:1.4em}
+.top3 a{pointer-events:auto;color:inherit;text-decoration:underline 1px transparent;text-underline-offset:.45em;transition:color .2s,text-decoration-color .2s}
+.top3 a:hover,.top3 a:focus-visible{color:var(--red);text-decoration-color:var(--red);outline:none}
+/* up to 1100px line C comes in from the right edge, right where the list starts */
+@media (max-width:1100px){.top3{top:calc(var(--u)*98)}}
+/* phones: no room by the cross, so both lists sit in the red room, white like its other tags */
+@media (max-width:700px){
+  .about .tag{color:#fff;font-size:8.5px;letter-spacing:.14em;line-height:2}
+  .about .tag b{color:#fff;background:var(--ink);padding:0 .4em}
+  .top3{left:calc(var(--u)*60.6);top:calc(var(--u)*(230 + var(--d) + 72.8))}
+  #cubeblock{height:calc(var(--u)*112 + 16px)}   /* a strip more red room, so the favourites clear the floor line on small phones */
+  .fav{left:max(calc(var(--u)*4),14px);top:calc(var(--u)*(230 + var(--d) + 112) - 52px)}
+  .fav .hrs{display:block;padding-left:6.6em}
+  .top3 i{color:rgba(255,255,255,.6);margin-right:1.1em}
+  .top3 a{text-decoration-color:rgba(255,255,255,.4)}
+  .top3 a:hover,.top3 a:focus-visible{color:#fff;text-decoration-color:#fff}
+}
 /* now playing (Spotify, with Discord presence as a stand-in): a plate under the gun girl that hides where she fades out */
 .np-wrap{--npw:clamp(272px,calc(var(--u)*32.5),640px);--art:clamp(46px,calc(var(--u)*4.6),80px);--pad:clamp(8px,calc(var(--u)*.8),15px);--lab:clamp(9px,calc(var(--u)*.62),11px);
   position:absolute;z-index:4;width:var(--npw);pointer-events:auto;will-change:transform;
@@ -223,8 +246,6 @@ footer b{color:var(--red)}
     <div class="spark" style="left:calc(var(--u)*88);top:calc(var(--u)*128);transform:scale(.7)"></div>
     <div class="spark" style="left:calc(var(--u)*40);top:calc(var(--u)*196);transform:scale(.8)"></div>
     <div class="tag edge deco" style="top:calc(var(--u)*222)">02 / <b>red room</b></div>
-    <div class="tag deco" style="left:calc(var(--u)*76);top:calc(var(--u)*92)">fig. <b>a</b> — wall / floor</div>
-    <div class="tag deco" style="left:calc(var(--u)*33);top:calc(var(--u)*177)">fig. <b>b</b> — cross</div>
   </div>
   <div class="lay figs">
     <div class="girl echo" id="g4" data-par="-.06" style="left:calc(var(--u)*57);top:calc(var(--u)*1);width:calc(var(--u)*40)">
@@ -283,6 +304,21 @@ footer b{color:var(--red)}
   </div>
   <footer><span>© 2026 <b>Pavel</b></span><span>Video editor — Philippines</span></footer>
 </section>
+<!-- about Pavel: favourites under the cross, top artists across from it; phones have no room by the cross, so both sit in the red room -->
+<div class="lay about">
+  <div class="tag fav">
+    <p>fav. <b>anime</b> — evangelion</p>
+    <p>fav. <b>game</b> — brawl stars <span class="hrs">· 5k hours</span></p>
+  </div>
+  <div class="tag top3">
+    <p>top <b>3</b> — artists</p>
+    <ol>
+      <li><i>01</i><a href="https://open.spotify.com/artist/72NhFAGG5Pt91VbheJeEPG" target="_blank" rel="noopener">2hollis</a></li>
+      <li><i>02</i><a href="https://open.spotify.com/artist/1YMUxFiaKsU85N9YolW0W9" target="_blank" rel="noopener">вышел покурить</a></li>
+      <li><i>03</i><a href="https://open.spotify.com/artist/1pxLlPRiWRUBGdSOrVL4f0" target="_blank" rel="noopener">kai angel</a></li>
+    </ol>
+  </div>
+</div>
 </div>
 
 <script>
