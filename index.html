@@ -20,6 +20,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<!-- the Evangelion title by the cross: a heavy Mincho, cut down to just its letters -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@900&text=%20AEGILNOSV%E3%82%A1%E3%82%A8%E3%82%AA%E3%82%B2%E3%83%AA%E3%83%B3%E3%83%B4%E4%B8%96%E6%96%B0%E7%B4%80&display=swap" rel="stylesheet">
 <style>
 :root{
   --red:#e3132b; --red-l:#c40f23; --red-r:#8f0a18;
@@ -147,6 +149,17 @@ footer b{color:var(--red)}
 .lay.about{z-index:4}
 .about .tag{line-height:2.1}
 .fav{left:calc(var(--u)*12);top:calc(var(--u)*185)}
+/* the favourite anime, in the space the lines leave right of the cross top, set like an Evangelion title card: a heavy Mincho, squeezed */
+.eva{position:absolute;left:calc(var(--u)*35.5);top:calc(var(--u)*62.3);font-family:'Noto Serif JP','Hiragino Mincho ProN','Yu Mincho',serif;font-weight:900;color:var(--ink);line-height:1;white-space:nowrap}
+.eva span{display:block;transform-origin:0 0}
+.eva .tag{position:static;margin:0 0 calc(var(--u)*1.2) calc(var(--u)*9.3);font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:400;line-height:1}
+.eva-a{margin-left:calc(var(--u)*9.4);font-size:calc(var(--u)*3.5);transform:scaleX(.8);letter-spacing:.02em}
+.eva-b{margin-top:calc(var(--u)*-.1);font-size:calc(var(--u)*9.4);transform:scaleX(.7);letter-spacing:-.01em;height:calc(var(--u)*8.3)}
+.eva-c{margin:calc(var(--u)*1.1) 0 0 calc(var(--u)*.5);font-size:calc(var(--u)*2.1);transform:scaleX(.86);letter-spacing:.06em}
+/* up to 1100px line C comes in from the right edge under the title: the block steps up and right, the Japanese line further right */
+@media (max-width:1100px){.eva{left:calc(var(--u)*37);top:calc(var(--u)*59.8)}.eva-b{font-size:calc(var(--u)*9);height:calc(var(--u)*8)}.eva-c{margin-left:calc(var(--u)*13)}}
+.fav .eva-old{display:none}   /* computers: the anime has its own title by the cross */
+@media (max-width:700px){.eva{display:none}.fav .eva-old{display:block}}
 .top3{left:calc(var(--u)*66.5);top:calc(var(--u)*94)}
 .top3 ol{list-style:none}
 .top3 i{font-style:normal;color:var(--mute);margin-right:1.4em}
@@ -445,8 +458,14 @@ footer b{color:var(--red)}
 </section>
 <!-- about Pavel: favourites under the cross, top artists across from it; phones have no room by the cross, so both sit in the red room -->
 <div class="lay about">
+  <div class="eva">
+    <span class="tag">fav. <b>anime</b></span>
+    <span class="eva-a">NEON GENESIS</span>
+    <span class="eva-b">EVANGELION</span>
+    <span class="eva-c" lang="ja">新世紀エヴァンゲリオン</span>
+  </div>
   <div class="tag fav">
-    <p>fav. <b>anime</b> — evangelion</p>
+    <p class="eva-old">fav. <b>anime</b> — evangelion</p>
     <p>fav. <b>game</b> — brawl stars <span class="hrs">· 5k hours</span></p>
   </div>
   <div class="tag top3">
