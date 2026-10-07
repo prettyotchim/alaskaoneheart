@@ -4,7 +4,7 @@
      GET /           setup checklist
      GET /login      Spotify consent screen, which returns to /callback and prints the refresh token once
    Secrets (Worker > Settings > Variables and Secrets, type Secret): SPOTIFY_SECRET, SPOTIFY_REFRESH. */
-const CLIENT_ID = 'a1bfcf1720df46a6bfa1d0e1aed63120';
+const CLIENT_ID = '20d1ce15ffee4a9cb7741973e56bc01a';
 const OWNER = '31dmdp75lwb7jyme324mqm5jiwhq';          // Pavel's Spotify user id: no other account can be connected
 const SCOPE = 'user-read-currently-playing user-read-recently-played';
 const FRESH = 5000;                                      // ms one Spotify answer is reused across visitors
