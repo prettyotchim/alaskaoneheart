@@ -627,11 +627,15 @@ req();
 })();
 </script>
 <script>
-/* background music: quiet and looped. It starts at once if the browser allows sound, otherwise with the click on the entry screen.
-   The quiet level is baked into the file, because iPhones ignore audio.volume; a new level gets a new file name, so no browser replays a cached louder copy. */
+/* background music: quiet and looped. Browsers only allow sound after a click, so the click on the entry screen starts it
+   (without the entry screen: the first click or key). The quiet level is baked into the file, because iPhones ignore audio.volume;
+   a new level bumps V, so no browser replays a cached louder copy. */
 (() => {
-  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio();
-  audio.src = audio.canPlayType('audio/webm; codecs="opus"') ? 'assets/bg2.webm' : 'assets/bg2.m4a';
+  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=3';
+  // AAC wherever it is surely supported (Safari's WebM support varies by version), Opus otherwise; if one fails, the other stands in
+  const files = ['assets/bg2.m4a', 'assets/bg2.webm'];
+  if (audio.canPlayType('audio/mp4; codecs="mp4a.40.2"') !== 'probably') files.reverse();
+  audio.src = files.shift() + V;
   audio.loop = true;
   audio.preload = 'auto';
   // phones: the top line runs into the girl, so the switch moves next to the scroll hint, on clean paper
@@ -656,11 +660,12 @@ req();
     if (!want) return;
     if (!audio.paused) { ramp(1, 600); return; }      // switched back on during the fade-out
     audio.volume = 0;
-    audio.play().then(() => { if (want) { ramp(1, 2500); enter(); } else audio.pause(); }).catch(() => {});
+    audio.play().then(() => { if (want) ramp(1, 2500); else audio.pause(); }).catch(() => {});
   }
-  const gate = document.getElementById('gate');
+  // the entry screen only ever closes on the visitor's own click, tap or key, and that same press starts the music
+  const gate = document.getElementById('gate'), gated = () => document.documentElement.classList.contains('gated');
   function enter() {
-    if (!gate || gate.classList.contains('out')) return;
+    if (!gated()) return;
     gate.classList.add('out');
     document.documentElement.classList.remove('gated');
     document.dispatchEvent(new Event('enter'));
@@ -669,15 +674,18 @@ req();
   if (gate) {
     gate.addEventListener('click', () => { start(); enter(); });
     // Enter or Space works without focusing the screen first (focus would paint the text red before any hover)
-    addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !gate.classList.contains('out')) { e.preventDefault(); start(); enter(); } });
+    addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && gated()) { e.preventDefault(); start(); enter(); } });
   }
-  const GESTURES = ['pointerup', 'mousedown', 'touchend', 'keydown'];
-  const kick = e => { if (!btn.contains(e.target)) start(); };
-  GESTURES.forEach(t => addEventListener(t, kick, { capture: true, passive: true }));
-  audio.addEventListener('playing', () => GESTURES.forEach(t => removeEventListener(t, kick, { capture: true })));
+  // past the entry screen, music that should play but doesn't (blocked, or stopped by the browser) starts on the next click or key
+  const kick = e => { if (want && audio.paused && !gated() && !btn.contains(e.target)) start(); };
+  ['pointerup', 'mousedown', 'touchend', 'keydown'].forEach(t => addEventListener(t, kick, { capture: true, passive: true }));
   audio.addEventListener('play', show);
   audio.addEventListener('pause', show);
-  audio.addEventListener('error', () => { btn.hidden = true; enter(); });
+  audio.addEventListener('error', () => {
+    if (!files.length) { btn.hidden = true; return; }
+    audio.src = files.shift() + V;
+    if (!gated()) start();
+  });
   btn.addEventListener('click', () => {
     want = !want;
     try { localStorage.setItem('sound', want ? 'on' : 'off'); } catch (e) {}
@@ -690,7 +698,7 @@ req();
     else if (wasPlaying) { wasPlaying = false; start(); }
   });
   show();
-  start();
+  if (!gate) start();
 })();
 </script>
 <script>
