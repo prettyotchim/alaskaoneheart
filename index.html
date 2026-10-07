@@ -210,7 +210,6 @@ footer b{color:var(--red)}
 .np.in:has(.np-song[href]:hover){translate:-2px -2px;box-shadow:7px 7px 0 var(--red)}
 .np-art{flex:none;position:relative;width:var(--art);height:var(--art);background:var(--red);display:grid;place-items:center;overflow:hidden;color:#fff}
 .np-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%}
-.np-art svg{width:42%;height:42%}
 .np-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .np-top{display:flex;align-items:center;gap:8px;min-width:0}
 .np-label{display:flex;align-items:center;gap:6px;min-width:0;font-size:var(--lab);letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);white-space:nowrap}
@@ -229,6 +228,46 @@ footer b{color:var(--red)}
 .np-bar{flex:1;height:3px;background:rgba(255,255,255,.18);position:relative}
 .np-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red)}
 @keyframes np-pulse{50%{opacity:.3}}
+/* the cover is the play button: it darkens on hover and shows a play icon (always, a little dimmer, where there is no hover) */
+.np-art .np-note{width:42%;height:42%;transition:opacity .15s}
+.np-art:has(.np-play:hover,.np-play:focus-visible) .np-note,.np[data-pv=load] .np-note,.np[data-pv=play] .np-note,.np[data-pv=pause] .np-note,.np[data-pv=none] .np-note{opacity:0}   /* the placeholder note steps out of the way of the control */
+.np-play{position:absolute;inset:0;z-index:1;display:grid;place-items:center;padding:0;border:0;border-radius:0;background:rgba(10,6,10,0);color:#fff;cursor:pointer;transition:background .18s;-webkit-tap-highlight-color:transparent}
+.np-play[hidden]{display:none}
+.np-play>*{grid-area:1/1;width:46%;height:46%;opacity:0;transform:scale(.8);transition:opacity .15s,transform .15s}
+.np-play .eq{width:auto;height:15px;gap:3px;align-self:center;justify-self:center}
+.np-play .eq i{width:3px;background:#fff}
+.np-play:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+.np-play:hover,.np-play:focus-visible,.np[data-pv=load] .np-play,.np[data-pv=pause] .np-play,.np[data-pv=none] .np-play{background:rgba(10,6,10,.55)}
+.np[data-pv=play] .np-play{background:rgba(10,6,10,.42)}
+.np[data-pv=play] .np-play:hover,.np[data-pv=play] .np-play:focus-visible{background:rgba(10,6,10,.55)}
+.np[data-pv=idle] .np-play:hover .i-play,.np[data-pv=idle] .np-play:focus-visible .i-play,.np[data-pv=pause] .i-play,
+.np[data-pv=load] .i-load,.np[data-pv=play] .i-eq,.np[data-pv=play] .np-play:hover .i-pause,.np[data-pv=play] .np-play:focus-visible .i-pause,.np[data-pv=none] .i-ban{opacity:1;transform:none}
+.np[data-pv=play] .np-play:hover .i-eq,.np[data-pv=play] .np-play:focus-visible .i-eq{opacity:0}
+.np[data-pv=none] .np-play{cursor:default}
+.np[data-pv=load] .np-play{cursor:progress}
+.np-play .i-load{animation:np-spin .9s linear infinite}
+.np[data-pv=play] .np-play .eq i{animation:eq 1.2s ease-in-out infinite}
+@keyframes np-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media (hover:none){
+  .np[data-pv=idle] .np-note{opacity:0}
+  .np[data-pv=idle] .np-play{background:rgba(10,6,10,.3)}
+  .np[data-pv=idle] .np-play .i-play{opacity:1;transform:none}
+}
+/* how far the preview has got: a thin line along the bottom of the cover */
+.np-pbar{position:absolute;left:0;right:0;bottom:0;height:3px;z-index:2;background:#fff;transform:scaleX(var(--pv,0));transform-origin:0 50%;opacity:0;transition:opacity .2s;pointer-events:none}
+.np[data-pv=play] .np-pbar,.np[data-pv=pause] .np-pbar{opacity:.95}
+/* volume tray under the cover: from near silence up to a little above the background level */
+.np-vol{position:absolute;left:0;top:calc(100% + 12px);display:flex;align-items:center;gap:9px;width:calc(var(--art) + var(--pad)*2.3 + 96px);padding:calc(var(--pad)*.75) calc(var(--pad)*1.2);
+  background:var(--ink);color:#fff;box-shadow:4px 4px 0 var(--red);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .25s,transform .25s,visibility 0s .25s}
+.np-vol.in{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .25s}
+.np-vol svg{flex:none;width:16px;height:16px;color:rgba(255,255,255,.75)}
+.np-vol input{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:22px;margin:0;padding:0;background:transparent;cursor:pointer;--p:70%}
+.np-vol input:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.np-vol input::-webkit-slider-runnable-track{height:3px;background:linear-gradient(90deg,var(--red) var(--p),rgba(255,255,255,.24) var(--p))}
+.np-vol input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;margin-top:-4.5px;border:0;border-radius:50%;background:#fff}
+.np-vol input::-moz-range-track{height:3px;background:rgba(255,255,255,.24)}
+.np-vol input::-moz-range-progress{height:3px;background:var(--red)}
+.np-vol input::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#fff}
 /* phones: the plate a touch smaller */
 @media (max-width:700px){
   .np-wrap{--npw:246px;--art:41px;--pad:7px;--lab:8.5px}
@@ -236,7 +275,7 @@ footer b{color:var(--red)}
   .np-artist{font-size:10.5px}
   .np-pre{display:none}
 }
-@media (prefers-reduced-motion: reduce){.reveal,.wg .inner,.np{transition:none}.np-dot{animation:none!important}}
+@media (prefers-reduced-motion: reduce){.reveal,.wg .inner,.np{transition:none}.np-dot{animation:none!important}.np-play .eq i{animation:none!important;height:70%}.np-vol{transition:none}}
 </style>
 </head>
 <body>
@@ -299,7 +338,16 @@ footer b{color:var(--red)}
     <!-- now playing on Spotify, read from Discord presence (script at the bottom) -->
     <div class="np-wrap" id="npw" hidden>
       <div class="np" id="np">
-        <span class="np-art"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2 20 3v12.6a2.6 2.6 0 1 1-2-2.5V7.4l-8 1.5v8.8a2.6 2.6 0 1 1-2-2.5z" fill="currentColor"/></svg><img id="np-img" alt="" hidden></span>
+        <span class="np-art"><svg class="np-note" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2 20 3v12.6a2.6 2.6 0 1 1-2-2.5V7.4l-8 1.5v8.8a2.6 2.6 0 1 1-2-2.5z" fill="currentColor"/></svg><img id="np-img" alt="" hidden>
+          <!-- a 30-second preview of the track plays from the cover; the Worker finds the clip (script at the bottom) -->
+          <button class="np-play" id="np-play" type="button" aria-label="Play a 30-second preview" hidden>
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19.4 12z" fill="currentColor"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+            <span class="eq i-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="i-load" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-dasharray="14 40"/></svg>
+            <svg class="i-ban" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6.7 17.3 17.3 6.7" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <i class="np-pbar" aria-hidden="true"></i></span>
         <span class="np-body">
           <span class="np-top">
             <span class="np-label"><i class="np-dot"></i><span id="np-state">Spotify</span></span>
@@ -309,6 +357,11 @@ footer b{color:var(--red)}
           <span class="np-artist" id="np-artist"></span>
           <span class="np-prog"><span id="np-el">0:00</span><span class="np-bar"><span class="np-fill" id="np-fill"></span></span><span id="np-tot">0:00</span></span>
         </span>
+      </div>
+      <!-- preview volume, hangs under the cover while the preview plays -->
+      <div class="np-vol" id="np-vol">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.6L13 19V5L7.6 9.5z" fill="currentColor"/><path d="M16 8.6a4.8 4.8 0 0 1 0 6.8" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        <input id="np-range" type="range" min="0" max="100" step="1" value="70" aria-label="Preview volume">
       </div>
     </div>
   </div>
@@ -733,17 +786,20 @@ req();
 </script>
 <script>
 /* background music: quiet and looped. Browsers only allow sound after a click, so the click on the entry screen starts it
-   (without the entry screen: the first click or key). The quiet level is baked into the file, because iPhones ignore audio.volume;
-   a new level bumps V, so no browser replays a cached louder copy. */
+   (without the entry screen: the first click or key). The quiet level is baked into the file (-37 LUFS), because iPhones ignore audio.volume;
+   a new level bumps V, so no browser replays a cached louder copy. Computers, where volume works, play it a little under that.
+   While a preview from the Spotify plate plays, the music steps aside and comes back after it (the plate script sends "preview"). */
 (() => {
-  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=4';
+  const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=5';
+  const LEVEL = matchMedia('(hover: hover) and (pointer: fine)').matches ? 0.45 : 1;   // 0.45 = -7 dB, about -44 LUFS
+  window.siteSound = { level: LEVEL };
   // AAC wherever it is surely supported (Safari's WebM support varies by version), Opus otherwise; if one fails, the other stands in
   const files = ['assets/bg2.m4a', 'assets/bg2.webm'];
   if (audio.canPlayType('audio/mp4; codecs="mp4a.40.2"') !== 'probably') files.reverse();
   audio.src = files.shift() + V;
   audio.loop = true;
   audio.preload = 'auto';
-  let want = true, fade = 0, wasPlaying = false;
+  let want = true, fade = 0, wasPlaying = false, ducked = false;
   try { want = localStorage.getItem('sound') !== 'off'; } catch (e) {}
   const show = () => {
     btn.classList.toggle('on', want && !audio.paused);
@@ -756,12 +812,21 @@ req();
     const step = t => { const k = Math.min(1, (t - t0) / ms); audio.volume = Math.min(1, Math.max(0, from + (to - from) * k)); if (k < 1) fade = requestAnimationFrame(step); else if (then) then(); };
     fade = requestAnimationFrame(step);
   };
-  function start() {
-    if (!want) return;
-    if (!audio.paused) { ramp(1, 600); return; }      // switched back on during the fade-out
+  function start(ms) {
+    if (!want || ducked) return;
+    if (!audio.paused) { ramp(LEVEL, 600); return; }      // switched back on during the fade-out
     audio.volume = 0;
-    audio.play().then(() => { if (want) ramp(1, 2500); else audio.pause(); }).catch(() => {});
+    audio.play().then(() => { if (want && !ducked) ramp(LEVEL, ms || 2500); else audio.pause(); }).catch(() => {});
   }
+  // a preview takes over: the music fades out (iPhones can't fade, so they just pause), then returns when the preview stops
+  document.addEventListener('preview', e => {
+    const on = !!(e.detail && e.detail.on);
+    if (on === ducked) return;
+    ducked = on;
+    if (on) { if (!audio.paused) ramp(0, 500, () => { if (ducked) audio.pause(); }); }
+    else if (document.hidden) wasPlaying = want;        // a hidden tab stays quiet; the music returns with the tab
+    else start(1500);
+  });
   // the entry screen only ever closes on the visitor's own click, tap or key, and that same press starts the music
   const gate = document.getElementById('gate'), gated = () => document.documentElement.classList.contains('gated');
   function enter() {
@@ -791,6 +856,7 @@ req();
     try { localStorage.setItem('sound', want ? 'on' : 'off'); } catch (e) {}
     if (want) start(); else ramp(0, 350, () => audio.pause());
     show();
+    document.dispatchEvent(new CustomEvent('soundchange', { detail: { on: want } }));
   });
   // a background tab stays quiet, and picks up again on return
   document.addEventListener('visibilitychange', () => {
@@ -885,7 +951,7 @@ req();
         fill = $('np-fill'), elapsed = $('np-el'), total = $('np-tot');
   const STATUS = { online: 'online', idle: 'away', dnd: 'do not disturb', offline: 'offline' };
   const fmt = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
-  let ts = null, timer = 0;
+  let ts = null, timer = 0, cur = null;
 
   function tick() {
     if (!ts) return;
@@ -897,13 +963,17 @@ req();
 
   // t: { label, pre, live, song, artist, art, url, start, end, frozen }, or { idle: line under "Nothing playing" }, or null while nothing is known;
   // pre is the start of the label that phones leave out ("Played " 5 min ago)
+  const setLabel = t => {
+    state.textContent = t.label;
+    if (t.pre) state.prepend(Object.assign(document.createElement('span'), { className: 'np-pre', textContent: t.pre }));
+  };
   function render(t) {
     clearInterval(timer); ts = null;
     const has = !!(t && t.song);
+    cur = has ? t : null;
     np.classList.toggle('playing', has && !!t.live);
     if (has) {
-      state.textContent = t.label;
-      if (t.pre) state.prepend(Object.assign(document.createElement('span'), { className: 'np-pre', textContent: t.pre }));
+      setLabel(t);
       song.textContent = t.song;
       artist.textContent = t.artist || '';
       setArt(t.art);
@@ -919,6 +989,8 @@ req();
       song.removeAttribute('aria-label');
     }
     np.classList.toggle('has-time', !!ts);
+    const id = has ? t.id || '' : '';
+    if (id !== pv.id || pv.st === 'new') pvTrack(id);
   }
 
   /* covers: through the Worker first (some networks can't reach i.scdn.co), then straight from Spotify, else the note icon */
@@ -934,6 +1006,180 @@ req();
     else { img.dataset.failed = '1'; img.hidden = true; }
   });
 
+  /* ---------- a 30-second preview from the cover ---------- */
+  // The Worker finds the clip (/pv/<track id>) and passes it through. It plays through Web Audio, because iPhones ignore audio.volume, and its level is
+  // matched by loudness to the background music as heard on this device, so every track starts "as quiet as the music". The slider runs from
+  // silence (left) to about 6 dB above that (right); 70 % is the background level. The music steps aside while the clip plays.
+  const PV_URL = NOW_URL ? NOW_URL.replace(/\/now$/, '/pv/') : '';
+  const PV_BG = -37;   // loudness of assets/bg2.* in LUFS, what the meter below is checked against
+  const pvBtn = $('np-play'), pvBox = $('np-vol'), pvRange = $('np-range'), pvArt = pvBtn.parentNode;
+  const pv = { st: 'new', id: '', token: 0, cache: null, bad: new Set(), ctx: null, src: null, fade: null, gain: null, t0: 0, raf: 0, flash: 0 };
+  const LABELS = { idle: 'Play a 30-second preview', load: 'Loading the preview', play: 'Pause the preview', pause: 'Resume the preview', none: 'No preview for this track', off: '' };
+  const duck = on => document.dispatchEvent(new CustomEvent('preview', { detail: { on } }));
+
+  // integrated loudness (ITU-R BS.1770: K-weighting, 400 ms blocks, absolute and relative gate); within 0.05 LU of ffmpeg's ebur128 on test files
+  function lufs(chans, rate) {
+    const stage = hp => {
+      const k = Math.tan(Math.PI * (hp ? 38.13547087602444 : 1681.974450955533) / rate), q = hp ? 0.5003270373238773 : 0.7071752369554196, a0 = 1 + k / q + k * k;
+      if (hp) return [1, -2, 1, 2 * (k * k - 1) / a0, (1 - k / q + k * k) / a0];
+      const vh = Math.pow(10, 3.999843853973347 / 20), vb = Math.pow(vh, 0.4996667741545416);
+      return [(vh + vb * k / q + k * k) / a0, 2 * (k * k - vh) / a0, (vh - vb * k / q + k * k) / a0, 2 * (k * k - 1) / a0, (1 - k / q + k * k) / a0];
+    };
+    const filters = [stage(false), stage(true)], n = Math.floor(rate * 0.4), blocks = Math.floor(chans[0].length / n), pw = new Float64Array(blocks);
+    for (let d of chans) {
+      for (const [b0, b1, b2, a1, a2] of filters) {
+        let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+        const o = new Float32Array(d.length);
+        for (let i = 0; i < d.length; i++) { const x = d[i], y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; o[i] = y; }
+        d = o;
+      }
+      for (let b = 0; b < blocks; b++) { let e = 0; for (let i = b * n, end = i + n; i < end; i++) e += d[i] * d[i]; pw[b] += e / n; }
+    }
+    const db = p => -0.691 + 10 * Math.log10(p), mean = a => a.reduce((x, y) => x + y, 0) / a.length;
+    let g = Array.from(pw).filter(p => db(p) > -70);
+    if (!g.length) return -70;
+    const rel = db(mean(g)) - 10;
+    g = g.filter(p => db(p) > rel);
+    return g.length ? db(mean(g)) : -70;
+  }
+
+  function pvSet(st) {
+    pv.st = st;
+    np.dataset.pv = st;
+    pvBtn.setAttribute('aria-label', LABELS[st]);
+    pvBox.classList.toggle('in', st === 'play' || st === 'pause');
+  }
+  // gain for the clip: its loudness brought to the music's (as played on this device), then moved by the slider
+  function pvVolume() {
+    const lvl = (window.siteSound && window.siteSound.level) || 1, p = pvRange.value / 100;
+    const base = Math.pow(10, (PV_BG + 20 * Math.log10(lvl) - pv.cache.lufs) / 20);
+    return Math.min(base, 4) * Math.pow(p / 0.7, 2);
+  }
+  const pvPaint = () => pvRange.style.setProperty('--p', pvRange.value + '%');
+  pvRange.addEventListener('input', () => {
+    pvPaint();
+    if (pv.gain && pv.cache) pv.gain.gain.setTargetAtTime(pvVolume(), pv.ctx.currentTime, 0.03);
+    try { localStorage.setItem('pvvol', pvRange.value); } catch (e) {}
+  });
+  try { const v = localStorage.getItem('pvvol'); if (v && /^\d{1,3}$/.test(v) && +v <= 100) pvRange.value = v; } catch (e) {}
+  pvPaint();
+
+  function pvFrame() {
+    cancelAnimationFrame(pv.raf);
+    const step = () => {
+      if (pv.st !== 'play') return;
+      pvArt.style.setProperty('--pv', Math.min(1, (pv.ctx.currentTime - pv.t0) / pv.cache.buf.duration));
+      pv.raf = requestAnimationFrame(step);
+    };
+    step();
+  }
+  const pvQuiet = () => { cancelAnimationFrame(pv.raf); pvArt.style.setProperty('--pv', 0); };
+
+  async function pvLoad(t) {
+    if (pv.cache && pv.cache.id === t.id) return pv.cache;
+    const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 15000);
+    try {
+      const q = (t.artist ? t.artist + ' - ' : '') + t.song;
+      const r = await fetch(PV_URL + encodeURIComponent(t.id) + '?isrc=' + encodeURIComponent(t.isrc || '') + '&q=' + encodeURIComponent(q), { signal: ac.signal });
+      if (r.status === 404 || r.status === 400) return 'none';          // the Worker has no clip for this track
+      if (!r.ok) return null;
+      const data = await r.arrayBuffer();
+      const buf = await new Promise((ok, no) => { const p = pv.ctx.decodeAudioData(data, ok, no); if (p && p.then) p.then(ok, no); });
+      const chans = [buf.getChannelData(0)];
+      chans.push(buf.numberOfChannels > 1 ? buf.getChannelData(1) : chans[0]);   // a mono clip plays on both sides
+      return (pv.cache = { id: t.id, buf, lufs: lufs(chans, buf.sampleRate) });
+    } catch (e) { return null; }
+    finally { clearTimeout(timer); }
+  }
+
+  function pvLaunch() {
+    const ctx = pv.ctx, buf = pv.cache.buf, now = ctx.currentTime, src = ctx.createBufferSource(), fade = ctx.createGain(), gain = ctx.createGain();
+    src.buffer = buf; src.connect(fade); fade.connect(gain); gain.connect(ctx.destination);
+    gain.gain.value = pvVolume();
+    fade.gain.setValueAtTime(0, now);                                   // a short fade in, and out at the end of the clip: no clicks
+    fade.gain.linearRampToValueAtTime(1, now + 0.3);
+    fade.gain.setValueAtTime(1, now + Math.max(0.3, buf.duration - 1));
+    fade.gain.linearRampToValueAtTime(0, now + buf.duration);
+    src.onended = () => { if (pv.src === src) pvEnd(); };
+    src.start(now);
+    Object.assign(pv, { src, fade, gain, t0: now });
+    pvSet('play'); duck(true); pvFrame();
+  }
+  function pvPause() {
+    if (pv.st !== 'play') return;
+    const ctx = pv.ctx, t = ctx.currentTime;
+    pv.gain.gain.cancelScheduledValues(t); pv.gain.gain.setTargetAtTime(0, t, 0.015);
+    setTimeout(() => { if (pv.st === 'pause') ctx.suspend(); }, 80);
+    pvSet('pause'); duck(false);
+  }
+  function pvResume() {
+    if (pv.st !== 'pause') return;
+    const ctx = pv.ctx;
+    ctx.resume().then(() => { if (pv.st === 'play') pv.gain.gain.setTargetAtTime(pvVolume(), ctx.currentTime, 0.02); });
+    pvSet('play'); duck(true); pvFrame();
+  }
+  function pvEnd() {
+    pv.src = null; pvQuiet();
+    pvSet('idle'); duck(false);
+    pv.ctx.suspend();
+  }
+  // another track, sound switched off, or the page is going away: stop at once (with a short fade when it was audible)
+  function pvStop() {
+    pv.token++;
+    const was = pv.st, ctx = pv.ctx, src = pv.src;
+    pv.src = null; pvQuiet();
+    if (src) {
+      src.onended = null;
+      try {
+        if (was === 'play') { const t = ctx.currentTime; pv.fade.gain.cancelScheduledValues(t); pv.fade.gain.setValueAtTime(pv.fade.gain.value, t); pv.fade.gain.linearRampToValueAtTime(0, t + 0.12); src.stop(t + 0.14); }
+        else src.stop();
+      } catch (e) {}
+      setTimeout(() => { try { src.disconnect(); } catch (e) {} }, 300);
+    }
+    if (ctx) setTimeout(() => { if (pv.st !== 'play') ctx.suspend(); }, 300);
+    if (was === 'play') duck(false);
+    if (was !== 'off' && was !== 'none') pvSet('idle');
+  }
+  // the label line says what went wrong for a moment, then goes back to the track's own label
+  function pvFlash(text) {
+    clearTimeout(pv.flash);
+    state.textContent = text;
+    pv.flash = setTimeout(() => { if (cur) setLabel(cur); }, 2600);
+  }
+  function pvTrack(id) {
+    if (pv.st !== 'new') pvStop();
+    if (pv.cache && pv.cache.id !== id) pv.cache = null;
+    pv.id = id;
+    const none = !id || !PV_URL;
+    pvBtn.hidden = none;
+    pvSet(none ? 'off' : pv.bad.has(id) ? 'none' : 'idle');
+  }
+
+  pvBtn.addEventListener('click', async () => {
+    if (pv.st === 'play') return pvPause();
+    if (pv.st === 'pause') return pvResume();
+    if (pv.st !== 'idle' || !cur || !cur.id) return;
+    const t = cur, AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) { pv.bad.add(t.id); pvSet('none'); pvFlash('No preview here'); return; }
+    // the audio engine is made and woken inside the tap; iOS keeps it silent otherwise (and ignores the silent switch only in "playback" mode)
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    if (!pv.ctx) pv.ctx = new AC();
+    const ctx = pv.ctx, my = ++pv.token;
+    const woke = ctx.resume();
+    try { const b = ctx.createBuffer(1, 1, 22050), s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination); s.start(0); } catch (e) {}
+    pvSet('load');
+    const c = await pvLoad(t);
+    if (my !== pv.token) return;                                       // the visitor moved on while it loaded
+    if (c === 'none') { pv.bad.add(t.id); pvSet('none'); pvFlash('No preview'); ctx.suspend(); return; }
+    if (!c) { pvSet('idle'); pvFlash("Couldn't load"); ctx.suspend(); return; }
+    try { await woke; await ctx.resume(); } catch (e) {}
+    if (my !== pv.token) return;
+    if (document.hidden) { pvSet('idle'); ctx.suspend(); return; }     // the tab went to the background while the clip loaded
+    try { pvLaunch(); } catch (e) { pvSet('idle'); pvFlash("Couldn't play"); ctx.suspend(); }
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && pv.st === 'play') pvPause(); });
+  document.addEventListener('soundchange', e => { if (e.detail && !e.detail.on) pvStop(); });
+
   /* ---------- Spotify through the Worker ---------- */
   // "ago" is how long since the track last played, counted by the Worker so a visitor's clock can't skew it
   const ago = ms => {
@@ -942,7 +1188,7 @@ req();
   };
   const fromSpotify = j => {
     if (!j.song) return { idle: '' };
-    const t = { song: j.song, artist: j.artist, art: j.art, url: j.url }, now = Date.now();
+    const t = { song: j.song, artist: j.artist, art: j.art, url: j.url, id: j.id, isrc: j.isrc }, now = Date.now();
     const when = typeof j.ago === 'number' ? { label: ago(j.ago), pre: 'Played ' } : null;
     if (j.playing) return { ...t, label: 'Now playing', live: true, start: now - j.progress, end: now - j.progress + j.duration };
     if (j.paused) return { ...t, label: 'Paused', ...when, start: 0, end: j.duration, frozen: j.progress };
@@ -982,7 +1228,7 @@ req();
     if (!s) return { idle: p && p.discord_status ? 'Discord: ' + (STATUS[p.discord_status] || 'offline') : '' };
     const tsp = s.timestamps || {};
     return { label: 'Now playing', live: true, song: s.song || 'Unknown track', artist: (s.artist || '').replace(/;\s*/g, ', '), art: s.album_art_url,
-             url: s.track_id ? 'https://open.spotify.com/track/' + s.track_id : '', start: tsp.start, end: tsp.end };
+             url: s.track_id ? 'https://open.spotify.com/track/' + s.track_id : '', id: s.track_id, start: tsp.start, end: tsp.end };
   };
   let on = false, stopped = false, live = false, retry = 2000, ws = null, hb = 0;
   async function poll() {
@@ -1016,7 +1262,7 @@ req();
   if (location.hash === '#demo') {
     const now = Date.now();
     wrap.hidden = false;
-    render({ label: 'Now playing', live: true, song: 'Demo track', artist: 'Artist, Featured artist', art: 'assets/sit.webp', url: '', start: now - 42000, end: now + 173000 });
+    render({ label: 'Now playing', live: true, song: 'Demo track', artist: 'Artist, Featured artist', art: 'assets/sit.webp', url: '', id: 'demo', start: now - 42000, end: now + 173000 });
   } else if (NOW_URL) { wrap.hidden = false; render(null); spotify(); }
   else if (DISCORD_ID) { wrap.hidden = false; discordOn(); }
 })();

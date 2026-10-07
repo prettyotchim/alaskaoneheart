@@ -147,13 +147,23 @@ async function findPreview(id, isrc, q) {
   const html = await (await fetch('https://open.spotify.com/embed/track/' + id, { headers: { 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'en' } })).text().catch(() => '');
   const m = /https:\/\/p\.scdn\.co\/mp3-preview\/[A-Za-z0-9]+(?:\?[^"'\\\s<]*)?/.exec(html);
   if (m) return m[0].replace(/&amp;/g, '&');
-  if (q) {
-    const j = await deezer('search?limit=1&q=' + encodeURIComponent(q));
-    const t = j && j.data && j.data[0];
-    if (t && PREVIEW_HOST.test(t.preview || '')) return t.preview;
+  // last resort: search Deezer by "artist - song", and only take a result that really is that song (a wrong clip is worse than none)
+  const cut = q.indexOf(' - ');
+  if (cut > 0) {
+    const artists = q.slice(0, cut).split(/,\s*/), song = q.slice(cut + 3);
+    for (const query of ['artist:"' + artists[0].replace(/"/g, '') + '" track:"' + song.replace(/"/g, '') + '"', artists[0] + ' ' + song]) {
+      const j = await deezer('search?limit=8&q=' + encodeURIComponent(query));
+      const hit = ((j && j.data) || []).find(t => PREVIEW_HOST.test(t.preview || '') && sameTrack(t, artists, song));
+      if (hit) return hit.preview;
+    }
   }
   return '';
 }
+
+// "Song (feat. X)" and "Song - Remastered 2011" both count as "song"
+const plain = x => String(x || '').toLowerCase().replace(/[(\[].*?[)\]]/g, ' ').replace(/\s+-\s+.*$/, ' ').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const alike = (a, b) => !!a && !!b && (a === b || (Math.min(a.length, b.length) >= 3 && (a.includes(b) || b.includes(a))));
+const sameTrack = (t, artists, song) => alike(plain(t.title_short || t.title), plain(song)) && artists.some(a => alike(plain(a), plain(t.artist && t.artist.name)));
 
 /* ---------- After Effects status ---------- */
 // Pavel's AE plugin reports every 30 seconds while After Effects is open; quiet for LIVE ms means he closed it.
