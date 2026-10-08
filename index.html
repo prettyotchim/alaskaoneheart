@@ -84,6 +84,27 @@ svg.lines{position:absolute;top:0;left:calc(50% - var(--u)*50);width:calc(var(--
 .snd.on .eq i,.gate .eq i{background:var(--red);animation:eq 1.2s ease-in-out infinite}
 .eq i:nth-child(2){animation-delay:-.45s}.eq i:nth-child(3){animation-delay:-.9s}.eq i:nth-child(4){animation-delay:-.2s}
 @keyframes eq{0%,100%{height:25%}50%{height:100%}}
+/* music volume, computers only (phones have their own buttons, and iPhones ignore page volume): a small panel that drops under
+   the switch on hover or keyboard focus, right-aligned to it so it stays clear of the red line to its right */
+.sndgrp{position:relative;display:inline-block;margin-left:2.4em;vertical-align:middle}
+.sndgrp .snd{margin-left:0}
+.sndvol{display:none}
+@media (hover:hover) and (pointer:fine){
+  .sndvol{pointer-events:auto;position:absolute;right:0;top:calc(100% + .9em);z-index:5;display:flex;align-items:center;gap:1em;padding:.9em 1.1em;
+    background:var(--bg);box-shadow:0 0 0 1px rgba(0,0,0,.1);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .2s,transform .2s,visibility 0s .35s}
+  .sndgrp:hover .sndvol,.sndgrp:has(:focus-visible) .sndvol{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .2s,visibility 0s}
+  .sndvol .vl{color:var(--mute)}
+  .sndvol input{-webkit-appearance:none;appearance:none;width:8.5em;height:1.6em;margin:0;padding:0;background:transparent;cursor:pointer;--p:50%}
+  .sndvol input:focus-visible{outline:1px solid var(--red);outline-offset:3px}
+  .sndvol input::-webkit-slider-runnable-track{height:2px;background:linear-gradient(90deg,var(--red) var(--p),rgba(0,0,0,.18) var(--p))}
+  .sndvol input::-webkit-slider-thumb{-webkit-appearance:none;width:3px;height:12px;margin-top:-5px;border:0;border-radius:0;background:var(--ink)}
+  .sndvol input::-moz-range-track{height:2px;background:rgba(0,0,0,.18)}
+  .sndvol input::-moz-range-progress{height:2px;background:var(--red)}
+  .sndvol input::-moz-range-thumb{width:3px;height:12px;border:0;border-radius:0;background:var(--ink)}
+  .sndvol input:hover::-webkit-slider-thumb{background:var(--red)}
+  .sndvol input:hover::-moz-range-thumb{background:var(--red)}
+  .snd:not(.on) + .sndvol input{opacity:.45}
+}
 /* entry screen: browsers only allow sound after a click, so the first click is the way in */
 html.gated{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);color:var(--ink);cursor:pointer;outline:none;
@@ -393,7 +414,7 @@ footer b{color:var(--red)}
 <section id="s1">
   <div class="lay hero">
     <div class="title"><span>PAVEL</span><span class="ghost">PAVEL</span></div>
-    <div class="tag edge" style="top:calc(var(--u)*3)">[ <b>✕✕</b> ] alaskaoneheart.site<button class="snd" id="snd" type="button" aria-pressed="true" title="Background music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">sound </span><b>on</b></button></div>
+    <div class="tag edge" style="top:calc(var(--u)*3)">[ <b>✕✕</b> ] alaskaoneheart.site<span class="sndgrp"><button class="snd" id="snd" type="button" aria-pressed="true" title="Background music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">sound </span><b>on</b></button><span class="sndvol"><span class="vl">vol</span><input id="sndvol" type="range" min="0" max="100" step="1" value="50" aria-label="Music volume"></span></span></div>
     <div class="role edge">Video editor</div>
     <div class="info edge">
       <dl class="facts">
@@ -1023,19 +1044,37 @@ req();
 <script>
 /* background music: quiet and looped. Browsers only allow sound after a click, so the click on the entry screen starts it
    (without the entry screen: the first click or key). The quiet level is baked into the file (-37 LUFS), because iPhones ignore audio.volume;
-   a new level bumps V, so no browser replays a cached louder copy. Computers, where volume works, play it a little under that.
+   a new level bumps V, so no browser replays a cached louder copy. Computers play it under that by default, through Web Audio, and their visitors set
+   the level with the slider that drops under the switch (saved per browser): the same page is quiet in one pair of headphones and lost in another
+   (Bluetooth on Windows often plays far quieter at the same system volume), and a site cannot see which one is plugged in.
    While a preview from the Spotify plate plays, the music steps aside and comes back after it (the plate script sends "preview"). */
 (() => {
   const btn = document.getElementById('snd'), state = btn.querySelector('b'), audio = new Audio(), V = '?v=5';
-  const LEVEL = matchMedia('(hover: hover) and (pointer: fine)').matches ? 0.09 : 1;   // 0.09 = -21 dB, about -58 LUFS (pavel asked three times for quieter: 0.45, 0.18, now 6 dB under that)
-  window.siteSound = { level: LEVEL };
+  const DESK = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // the slider's middle, 0.09 = -21 dB, about -58 LUFS (pavel asked three times for quieter: 0.45, 0.18, then 6 dB under that);
+  // each step is 0.8 dB, so the right end is +40 dB, about -18 LUFS (the file peaks at -23 dBFS, so that is still clean), the left end is silence
+  const MID = 0.09, STEP = 0.8, slider = document.getElementById('sndvol');
+  let pos = 50;
+  try { const sv = parseInt(localStorage.getItem('vol'), 10); if (sv >= 0 && sv <= 100) pos = sv; } catch (e) {}
+  const level = () => !DESK ? 1 : pos <= 0 ? 0 : MID * Math.pow(10, (pos - 50) * STEP / 20);
+  window.siteSound = { get level() { return level(); } };
   // AAC wherever it is surely supported (Safari's WebM support varies by version), Opus otherwise; if one fails, the other stands in
   const files = ['assets/bg2.m4a', 'assets/bg2.webm'];
   if (audio.canPlayType('audio/mp4; codecs="mp4a.40.2"') !== 'probably') files.reverse();
   audio.src = files.shift() + V;
   audio.loop = true;
   audio.preload = 'auto';
-  let want = true, fade = 0, wasPlaying = false, ducked = false;
+  let want = true, fade = 0, wasPlaying = false, ducked = false, v = 0, ctx = null, gain = null;
+  // computers: the music goes through a gain node, so the slider can go above the file's own level (audio.volume stops at 1)
+  const setV = x => { v = Math.max(0, x); if (gain) gain.gain.value = v; else audio.volume = Math.min(1, v); };
+  function wire() {
+    if (DESK && !ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      try { ctx = new AC(); const g = ctx.createGain(); g.gain.value = 0; ctx.createMediaElementSource(audio).connect(g); g.connect(ctx.destination); gain = g; audio.volume = 1; }
+      catch (e) { gain = null; }
+    }
+    if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+  }
   try { want = localStorage.getItem('sound') !== 'off'; } catch (e) {}
   const show = () => {
     btn.classList.toggle('on', want && !audio.paused);
@@ -1044,15 +1083,26 @@ req();
   };
   const ramp = (to, ms, then) => {             // desktop fade; phones that ignore volume simply jump
     cancelAnimationFrame(fade);
-    const from = audio.volume, t0 = performance.now();
-    const step = t => { const k = Math.min(1, (t - t0) / ms); audio.volume = Math.min(1, Math.max(0, from + (to - from) * k)); if (k < 1) fade = requestAnimationFrame(step); else if (then) then(); };
+    const from = v, t0 = performance.now();
+    const step = t => { const k = Math.min(1, (t - t0) / ms); setV(from + (to - from) * k); if (k < 1) fade = requestAnimationFrame(step); else if (then) then(); };
     fade = requestAnimationFrame(step);
   };
   function start(ms) {
     if (!want || ducked) return;
-    if (!audio.paused) { ramp(LEVEL, 600); return; }      // switched back on during the fade-out
-    audio.volume = 0;
-    audio.play().then(() => { if (want && !ducked) ramp(LEVEL, ms || 2500); else audio.pause(); }).catch(() => {});
+    wire();
+    if (!audio.paused) { ramp(level(), 600); return; }      // switched back on during the fade-out
+    setV(0);
+    audio.play().then(() => { if (want && !ducked) ramp(level(), ms || 2500); else audio.pause(); }).catch(() => {});
+  }
+  if (slider) {
+    const paint = () => slider.style.setProperty('--p', pos + '%');
+    slider.value = pos; paint();
+    slider.addEventListener('input', () => {
+      pos = +slider.value; paint();
+      try { localStorage.setItem('vol', String(pos)); } catch (e) {}
+      if (want && !ducked && !audio.paused) { cancelAnimationFrame(fade); setV(level()); }
+      document.dispatchEvent(new Event('musiclevel'));     // a playing preview follows the music's level
+    });
   }
   // a preview takes over: the music fades out (iPhones can't fade, so they just pause), then returns when the preview stops
   document.addEventListener('preview', e => {
@@ -1078,7 +1128,7 @@ req();
     addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && gated()) { e.preventDefault(); start(); enter(); } });
   }
   // past the entry screen, music that should play but doesn't (blocked, or stopped by the browser) starts on the next click or key
-  const kick = e => { if (want && audio.paused && !gated() && !btn.contains(e.target)) start(); };
+  const kick = e => { if (want && (audio.paused || (ctx && ctx.state !== 'running')) && !gated() && !btn.contains(e.target)) start(); };
   ['pointerup', 'mousedown', 'touchend', 'keydown'].forEach(t => addEventListener(t, kick, { capture: true, passive: true }));
   audio.addEventListener('play', show);
   audio.addEventListener('pause', show);
@@ -1350,11 +1400,12 @@ req();
   }
   // gain for the clip: its loudness brought to the music's (as played on this device), then moved by the slider
   function pvVolume() {
-    const lvl = (window.siteSound && window.siteSound.level) || 1, p = pvRange.value / 100;
+    const lvl = window.siteSound ? window.siteSound.level : 1, p = pvRange.value / 100;
     const base = Math.pow(10, (PV_BG + 20 * Math.log10(lvl) - pv.cache.lufs) / 20);
     return Math.min(base, 4) * Math.pow(p / 0.7, 2);
   }
   const pvPaint = () => pvRange.style.setProperty('--p', pvRange.value + '%');
+  document.addEventListener('musiclevel', () => { if (pv.gain && pv.cache) pv.gain.gain.setTargetAtTime(pvVolume(), pv.ctx.currentTime, 0.03); });
   pvRange.addEventListener('input', () => {
     pvPaint();
     if (pv.gain && pv.cache) pv.gain.gain.setTargetAtTime(pvVolume(), pv.ctx.currentTime, 0.03);
